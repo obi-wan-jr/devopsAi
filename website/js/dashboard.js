@@ -82,8 +82,8 @@ function initializeChat() {
         // Show loading
         showLoading();
 
-        // Determine API endpoint
-        let endpoint = 'http://192.168.50.239:8080/chat';
+        // Determine API endpoint - use relative URL for same-origin requests
+        let endpoint = '/api/chat';
         if (selectedModel !== 'auto') {
             endpoint += `/${selectedModel}`;
         }
@@ -198,7 +198,7 @@ function initializeMonitor() {
 
     function fetchServiceLogs() {
         // Check API Gateway logs
-        fetch('http://192.168.50.239:8080/health')
+        fetch('/api/health')
             .then(response => response.json())
             .then(data => {
                 addLogEntry('api-gateway', 'info', `Health check: ${data.status}`);
@@ -208,7 +208,7 @@ function initializeMonitor() {
             });
 
         // Check Gemma 3 logs
-        fetch('http://192.168.50.239:11434/api/tags')
+        fetch('/api/gemma3/models')
             .then(response => response.json())
             .then(data => {
                 addLogEntry('ollama-gemma3', 'info', `Model available: ${data.models ? data.models.length : 0} models`);
@@ -218,7 +218,7 @@ function initializeMonitor() {
             });
 
         // Check DeepSeek-R1 logs
-        fetch('http://192.168.50.239:11435/api/tags')
+        fetch('/api/deepseek/models')
             .then(response => response.json())
             .then(data => {
                 addLogEntry('ollama-deepseek', 'info', `Model available: ${data.models ? data.models.length : 0} models`);
@@ -312,7 +312,7 @@ function initializeMonitor() {
 
     function checkServiceStatus() {
         // Check API Gateway
-        fetch('http://192.168.50.239:8080/health')
+        fetch('/api/health')
             .then(response => {
                 statusElements.gateway.textContent = 'Online';
                 statusElements.gateway.className = 'status-value online';
@@ -323,7 +323,7 @@ function initializeMonitor() {
             });
 
         // Check Gemma 3
-        fetch('http://192.168.50.239:11434/api/tags')
+        fetch('/api/gemma3/models')
             .then(response => {
                 statusElements.gemma.textContent = 'Online';
                 statusElements.gemma.className = 'status-value online';
@@ -334,7 +334,7 @@ function initializeMonitor() {
             });
 
         // Check DeepSeek-R1
-        fetch('http://192.168.50.239:11435/api/tags')
+        fetch('/api/deepseek/models')
             .then(response => {
                 statusElements.deepseek.textContent = 'Online';
                 statusElements.deepseek.className = 'status-value online';

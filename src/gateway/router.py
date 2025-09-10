@@ -229,6 +229,38 @@ class APIGateway:
                     "health": "/health"
                 }
             }
+        
+        @self.app.get("/{model_id}/models")
+        async def get_model_info(model_id: str):
+            """Get information about a specific model"""
+            if model_id not in self.models:
+                raise HTTPException(status_code=404, detail=f"Model {model_id} not found")
+            
+            config = self.models[model_id]
+            
+            # Get model list from Ollama
+            try:
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    response = await client.get(f"{config['url']}/api/tags")
+                    response.raise_for_status()
+                    ollama_data = response.json()
+                    
+                return {
+                    "model_id": model_id,
+                    "name": config["name"],
+                    "description": config["description"],
+                    "ollama_models": ollama_data.get("models", []),
+                    "status": "available"
+                }
+            except Exception as e:
+                return {
+                    "model_id": model_id,
+                    "name": config["name"],
+                    "description": config["description"],
+                    "ollama_models": [],
+                    "status": "error",
+                    "error": str(e)
+                }
     
     def _select_model(self, user_preference: Optional[str], message: str) -> str:
         """Select the best model for the given request"""
