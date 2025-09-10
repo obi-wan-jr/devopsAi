@@ -1,273 +1,241 @@
-// AI System Administrator Agent - Website JavaScript
+// AI System Administrator Agent Documentation JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile Navigation Toggle
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-    
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-        });
-    });
-    
+    // Set last updated timestamp
+    const lastUpdated = document.getElementById('lastUpdated');
+    if (lastUpdated) {
+        lastUpdated.textContent = new Date().toLocaleString();
+    }
+
     // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - 200; // Account for sticky header
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
                 });
             }
         });
     });
-    
-    // Tab functionality
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
-            
-            // Remove active class from all buttons and contents
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Add active class to clicked button and corresponding content
-            this.classList.add('active');
-            document.getElementById(targetTab).classList.add('active');
-        });
-    });
-    
-    // Copy code functionality
-    window.copyCode = function(elementId) {
-        const codeElement = document.getElementById(elementId);
-        const code = codeElement.textContent;
-        
-        navigator.clipboard.writeText(code).then(function() {
-            // Show success feedback
-            const copyBtn = codeElement.parentElement.querySelector('.copy-btn');
-            const originalIcon = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-            copyBtn.style.color = '#10b981';
-            
-            setTimeout(function() {
-                copyBtn.innerHTML = originalIcon;
-                copyBtn.style.color = '';
-            }, 2000);
-        }).catch(function(err) {
-            console.error('Failed to copy code: ', err);
-        });
-    };
-    
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 100) {
-            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-        } else {
-            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-            navbar.style.boxShadow = 'none';
-        }
-    });
-    
-    // Intersection Observer for animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+
+    // Add active class to navigation links based on scroll position
+    const sections = document.querySelectorAll('section[id]');
+    const navItems = document.querySelectorAll('nav a[href^="#"]');
+
+    function updateActiveNav() {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 250;
+            const sectionHeight = section.offsetHeight;
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
             }
         });
-    }, observerOptions);
-    
-    // Observe elements for animation
-    document.querySelectorAll('.feature-card, .example-card, .endpoint-card, .troubleshooting-item').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-    
-    // Terminal animation
-    const terminalWindow = document.querySelector('.terminal-window');
-    if (terminalWindow) {
-        setTimeout(function() {
-            terminalWindow.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
-        }, 1000);
+
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href') === `#${current}`) {
+                item.classList.add('active');
+            }
+        });
     }
-    
-    // Chat interface animation
-    const chatMessages = document.querySelectorAll('.chat-message');
-    chatMessages.forEach((message, index) => {
-        message.style.opacity = '0';
-        message.style.transform = 'translateX(-20px)';
-        setTimeout(function() {
-            message.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            message.style.opacity = '1';
-            message.style.transform = 'translateX(0)';
-        }, 2000 + (index * 500));
-    });
-    
-    // Command examples animation
-    const commandItems = document.querySelectorAll('.command-item');
-    commandItems.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateY(20px)';
-        setTimeout(function() {
-            item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            item.style.opacity = '1';
-            item.style.transform = 'translateY(0)';
-        }, 3000 + (index * 100));
-    });
-    
-    // Add typing effect to terminal
-    const terminalCommand = document.querySelector('.command');
-    if (terminalCommand) {
-        const text = terminalCommand.textContent;
-        terminalCommand.textContent = '';
-        let i = 0;
-        
-        setTimeout(function() {
-            const typeWriter = setInterval(function() {
-                if (i < text.length) {
-                    terminalCommand.textContent += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typeWriter);
-                }
-            }, 100);
-        }, 1500);
-    }
-    
-    // Add hover effects to feature cards
-    document.querySelectorAll('.feature-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Add click effects to buttons
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const ripple = document.createElement('span');
-            const rect = this.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-            
-            ripple.style.width = ripple.style.height = size + 'px';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.classList.add('ripple');
-            
-            this.appendChild(ripple);
-            
-            setTimeout(function() {
-                ripple.remove();
-            }, 600);
-        });
-    });
-    
-    // Add CSS for ripple effect
-    const style = document.createElement('style');
-    style.textContent = `
-        .btn {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .ripple {
+
+    // Update active navigation on scroll
+    window.addEventListener('scroll', updateActiveNav);
+    updateActiveNav(); // Initial call
+
+    // Add copy functionality to code blocks
+    const codeBlocks = document.querySelectorAll('.code-block pre code');
+    codeBlocks.forEach(codeBlock => {
+        const copyButton = document.createElement('button');
+        copyButton.textContent = 'Copy';
+        copyButton.className = 'copy-btn';
+        copyButton.style.cssText = `
             position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-        }
-        
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
+            top: 10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        `;
+
+        const codeContainer = codeBlock.parentElement;
+        codeContainer.style.position = 'relative';
+        codeContainer.appendChild(copyButton);
+
+        copyButton.addEventListener('click', function() {
+            const text = codeBlock.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                copyButton.textContent = 'Copied!';
+                copyButton.style.background = '#27ae60';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                    copyButton.style.background = '#3498db';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                copyButton.textContent = 'Failed';
+                copyButton.style.background = '#e74c3c';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                    copyButton.style.background = '#3498db';
+                }, 2000);
+            });
+        });
+
+        copyButton.addEventListener('mouseenter', function() {
+            this.style.opacity = '1';
+        });
+
+        copyButton.addEventListener('mouseleave', function() {
+            this.style.opacity = '0.7';
+        });
+    });
+
+    // Add health check functionality
+    const healthCheckButton = document.createElement('button');
+    healthCheckButton.textContent = 'Check System Health';
+    healthCheckButton.className = 'health-check-btn';
+    healthCheckButton.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 15px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        transition: all 0.3s ease;
     `;
-    document.head.appendChild(style);
-    
-    // Performance optimization: Lazy load images
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.removeAttribute('data-src');
-                imageObserver.unobserve(img);
+
+    document.body.appendChild(healthCheckButton);
+
+    healthCheckButton.addEventListener('click', function() {
+        this.textContent = 'Checking...';
+        this.style.background = '#f39c12';
+        
+        // Check API Gateway health
+        fetch('http://meatpi:8080/health')
+            .then(response => response.json())
+            .then(data => {
+                this.textContent = '✅ System Healthy';
+                this.style.background = '#27ae60';
+                setTimeout(() => {
+                    this.textContent = 'Check System Health';
+                    this.style.background = '#27ae60';
+                }, 3000);
+            })
+            .catch(error => {
+                this.textContent = '❌ System Down';
+                this.style.background = '#e74c3c';
+                setTimeout(() => {
+                    this.textContent = 'Check System Health';
+                    this.style.background = '#27ae60';
+                }, 3000);
+            });
+    });
+
+    healthCheckButton.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+    });
+
+    healthCheckButton.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+
+    // Add search functionality
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search documentation...';
+    searchInput.className = 'search-input';
+    searchInput.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 15px;
+        border: 2px solid #3498db;
+        border-radius: 25px;
+        font-size: 14px;
+        width: 250px;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    `;
+
+    document.body.appendChild(searchInput);
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const sections = document.querySelectorAll('section');
+        
+        sections.forEach(section => {
+            const text = section.textContent.toLowerCase();
+            if (text.includes(searchTerm) || searchTerm === '') {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
             }
         });
     });
-    
-    images.forEach(img => imageObserver.observe(img));
-    
-    // Add loading states
-    const loadingElements = document.querySelectorAll('[data-loading]');
-    loadingElements.forEach(element => {
-        element.style.opacity = '0.5';
-        element.style.pointerEvents = 'none';
-        
-        setTimeout(function() {
-            element.style.opacity = '1';
-            element.style.pointerEvents = 'auto';
-        }, 1000);
-    });
-    
-    // Add error handling for copy functionality
-    window.addEventListener('error', function(e) {
-        console.error('JavaScript error:', e.error);
-    });
-    
-    // Add keyboard navigation support
+
+    // Add keyboard shortcuts
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Tab') {
-            document.body.classList.add('keyboard-navigation');
+        // Ctrl/Cmd + K to focus search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        
+        // Escape to clear search
+        if (e.key === 'Escape') {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.blur();
         }
     });
-    
-    document.addEventListener('mousedown', function() {
-        document.body.classList.remove('keyboard-navigation');
-    });
-    
-    // Add CSS for keyboard navigation
-    const keyboardStyle = document.createElement('style');
-    keyboardStyle.textContent = `
-        .keyboard-navigation *:focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
+
+    // Add tooltip for keyboard shortcuts
+    const tooltip = document.createElement('div');
+    tooltip.textContent = 'Press Ctrl+K to search';
+    tooltip.className = 'tooltip';
+    tooltip.style.cssText = `
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: #2c3e50;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     `;
-    document.head.appendChild(keyboardStyle);
-    
-    console.log('AI System Administrator Agent website loaded successfully!');
+
+    document.body.appendChild(tooltip);
+
+    // Show tooltip on page load
+    setTimeout(() => {
+        tooltip.style.opacity = '1';
+        setTimeout(() => {
+            tooltip.style.opacity = '0';
+        }, 3000);
+    }, 1000);
 });

@@ -116,40 +116,31 @@ services:
       retries: 3
       start_period: 30s
 
-  # Wiki.js service for comprehensive documentation
-  wiki:
-    image: ghcr.io/requarks/wiki:2
-    container_name: wiki-js
+  # Documentation website
+  docs:
+    image: nginx:alpine
+    container_name: ai-agent-docs
     restart: unless-stopped
     ports:
-      - "3004:3000"  # Map internal port 3000 to external port 3004
+      - "3004:80"  # Map internal port 80 to external port 3004
     volumes:
-      - wiki_data:/wiki/data
-      - wiki_logs:/wiki/logs
-    environment:
-      - DB_TYPE=sqlite
-      - DB_FILEPATH=/wiki/data/db.sqlite
-      - NODE_ENV=production
-      - WIKI_HOSTNAME=meatpi
-      - WIKI_PORT=3000
-      - WIKI_IS_HTTPS=false
-    user: "1000:1000"
+      - ./website:/usr/share/nginx/html:ro
     networks:
       - ai-agent-network
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
-        reservations:
-          memory: 256M
+          memory: 128M
           cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 10s
 
 networks:
   ai-agent-network:
