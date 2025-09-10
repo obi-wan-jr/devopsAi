@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI System Administrator Agent - Wiki & Documentation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-robot"></i>
+                <span>AI SysAdmin Agent</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#installation" class="nav-link">Installation</a></li>
+                <li><a href="#usage" class="nav-link">Usage</a></li>
+                <li><a href="#api" class="nav-link">API</a></li>
+                <li><a href="#troubleshooting" class="nav-link">Troubleshooting</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AI System Administrator Agent</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Your intelligent Linux system administration assistant powered by AutoGen and Qwen2 1.5B
+                </p>
+                <div class="hero-buttons">
+                    <a href="#installation" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Get Started
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <i class="fas fa-microchip"></i>
+                        <span>ARM64 Optimized</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security First</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-bolt"></i>
+                        <span>Real-time</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <span class="btn-close"></span>
+                            <span class="btn-minimize"></span>
+                            <span class="btn-maximize"></span>
+                        </div>
+                        <span class="terminal-title">AI SysAdmin Agent</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="prompt">$</span>
+                            <span class="command">Check disk usage</span>
+                        </div>
+                        <div class="terminal-output">
+                            <div class="ai-response">
+                                <i class="fas fa-robot"></i>
+                                <span>I'll check the disk usage for you...</span>
+                            </div>
+                            <div class="command-result">
+                                <pre>Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        15G  8.2G  6.1G  58% /
+/dev/mmcblk0p1  253M   54M  199M  22% /boot</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered</h3>
+                    <p>Powered by Qwen2 1.5B language model with AutoGen orchestration for intelligent system administration.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure Execution</h3>
+                    <p>Command whitelisting, audit logging, and safe execution with comprehensive security policies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Multiple Interfaces</h3>
+                    <p>CLI, Web UI, REST API, and WebSocket support for flexible interaction methods.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3>Pi 5 Optimized</h3>
+                    <p>Specifically designed and optimized for Raspberry Pi 5 ARM64 architecture.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>System Monitoring</h3>
+                    <p>Real-time monitoring of system resources, services, and processes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-docker"></i>
+                    </div>
+                    <h3>Docker Ready</h3>
+                    <p>Containerized deployment with Docker Compose for easy management and scaling.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="installation">
+        <div class="container">
+            <h2 class="section-title">Installation Guide</h2>
+            <div class="installation-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="docker">Docker Deployment</button>
+                    <button class="tab-btn" data-tab="manual">Manual Installation</button>
+                    <button class="tab-btn" data-tab="requirements">Requirements</button>
+                </div>
+                
+                <div class="tab-content active" id="docker">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Docker Deployment</span>
+                            <button class="copy-btn" onclick="copyCode('docker-code')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre id="docker-code"><code># Clone the repository
+git clone https://github.com/obi-wan-jr/devopsAi.git
+cd devopsAi
+
+# Deploy to Raspberry Pi 5
+./scripts/docker-deploy.sh
+
+# Or manually with Docker Compose
+docker-compose -f docker-compose.pi.yml up -d</code></pre>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Docker deployment is the recommended method for easy setup and management.</p>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="manual">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Manual Installation</span>
+                            <button class="copy-btn" onclick="copyCode('manual-code')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre id="manual-code"><code># Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install dependencies
+sudo apt install -y build-essential cmake git python3 python3-pip python3-venv
+
+# Clone and setup
+git clone https://github.com/obi-wan-jr/devopsAi.git
+cd devopsAi
+chmod +x scripts/install.sh
+./scripts/install.sh
+
+# Start the service
+sudo systemctl start ai-sysadmin-agent</code></pre>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="requirements">
+                    <div class="requirements-grid">
+                        <div class="requirement-card">
+                            <h4>Hardware</h4>
+                            <ul>
+                                <li>Raspberry Pi 5 (ARM64)</li>
+                                <li>8GB RAM (4GB minimum)</li>
+                                <li>32GB+ microSD card</li>
+                                <li>Network connection</li>
+                            </ul>
+                        </div>
+                        <div class="requirement-card">
+                            <h4>Software</h4>
+                            <ul>
+                                <li>Raspberry Pi OS (64-bit)</li>
+                                <li>Python 3.9+</li>
+                                <li>Docker (optional)</li>
+                                <li>Git</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="usage" class="usage">
+        <div class="container">
+            <h2 class="section-title">Usage Examples</h2>
+            <div class="usage-examples">
+                <div class="example-card">
+                    <h3><i class="fas fa-globe"></i> Web Interface</h3>
+                    <p>Access the modern web interface at <code>http://your-pi-ip:8080</code></p>
+                    <div class="example-demo">
+                        <div class="chat-interface">
+                            <div class="chat-message user">
+                                <span>Check disk usage</span>
+                            </div>
+                            <div class="chat-message ai">
+                                <i class="fas fa-robot"></i>
+                                <span>I'll check the disk usage for you...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <h3><i class="fas fa-terminal"></i> CLI Interface</h3>
+                    <p>Use the command-line interface for direct interaction</p>
+                    <div class="code-block">
+                        <pre><code>$ python -m src.interfaces.cli
+🤖 AI System Administrator Agent
+Ready to help with Linux system administration tasks!
+
+SysAdmin Agent: Check disk usage
+✅ I'll check the disk usage for you...
+
+📋 Execution Results:
+✅ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root        15G  8.2G  6.1G  58% /</code></pre>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <h3><i class="fas fa-code"></i> REST API</h3>
+                    <p>Integrate with your applications using the REST API</p>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://your-pi-ip:8081/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Check system memory"}'
+
+# Response
+{
+  "response": "I'll check the system memory for you...",
+  "status": "success"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="common-commands">
+                <h3>Common Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <code>Check disk usage</code>
+                        <span>Monitor storage space</span>
+                    </div>
+                    <div class="command-item">
+                        <code>Show running processes</code>
+                        <span>List active processes</span>
+                    </div>
+                    <div class="command-item">
+                        <code>Restart nginx service</code>
+                        <span>Service management</span>
+                    </div>
+                    <div class="command-item">
+                        <code>Check system uptime</code>
+                        <span>System status</span>
+                    </div>
+                    <div class="command-item">
+                        <code>Show memory usage</code>
+                        <span>Resource monitoring</span>
+                    </div>
+                    <div class="command-item">
+                        <code>List all services</code>
+                        <span>Service overview</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Section -->
+    <section id="api" class="api">
+        <div class="container">
+            <h2 class="section-title">API Reference</h2>
+            <div class="api-endpoints">
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/chat</span>
+                    </div>
+                    <p>Send a message to the AI agent</p>
+                    <div class="code-block">
+                        <pre><code>curl -X POST http://localhost:8081/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Check disk usage"}'</code></pre>
+                    </div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/api/status</span>
+                    </div>
+                    <p>Get agent status information</p>
+                    <div class="code-block">
+                        <pre><code>curl http://localhost:8081/api/status</code></pre>
+                    </div>
+                </div>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/health</span>
+                    </div>
+                    <p>Health check endpoint</p>
+                    <div class="code-block">
+                        <pre><code>curl http://localhost:8080/health</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Troubleshooting Section -->
+    <section id="troubleshooting" class="troubleshooting">
+        <div class="container">
+            <h2 class="section-title">Troubleshooting</h2>
+            <div class="troubleshooting-content">
+                <div class="troubleshooting-item">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Service Won't Start</h3>
+                    <div class="solution">
+                        <p><strong>Check logs:</strong></p>
+                        <div class="code-block">
+                            <pre><code>sudo journalctl -u ai-sysadmin-agent -f</code></pre>
+                        </div>
+                        <p><strong>Verify Python environment:</strong></p>
+                        <div class="code-block">
+                            <pre><code>cd /home/inggo/ai-agent
+source ai-agent-env/bin/activate
+python --version
+pip list | grep autogen</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="troubleshooting-item">
+                    <h3><i class="fas fa-database"></i> Model Loading Errors</h3>
+                    <div class="solution">
+                        <p><strong>Check model file:</strong></p>
+                        <div class="code-block">
+                            <pre><code>ls -la /home/inggo/ai-agent/models/
+file /home/inggo/ai-agent/models/qwen2-1.5b-q4_k_m.gguf</code></pre>
+                        </div>
+                        <p><strong>Re-download model:</strong></p>
+                        <div class="code-block">
+                            <pre><code>./scripts/setup_model.sh</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="troubleshooting-item">
+                    <h3><i class="fas fa-globe"></i> Web Interface Not Accessible</h3>
+                    <div class="solution">
+                        <p><strong>Check if service is listening:</strong></p>
+                        <div class="code-block">
+                            <pre><code>sudo netstat -tlnp | grep :8080</code></pre>
+                        </div>
+                        <p><strong>Check firewall:</strong></p>
+                        <div class="code-block">
+                            <pre><code>sudo ufw status
+sudo ufw allow 8080/tcp</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>AI System Administrator Agent</h3>
+                    <p>Intelligent Linux system administration powered by AI</p>
+                    <div class="social-links">
+                        <a href="https://github.com/obi-wan-jr/devopsAi" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#installation">Installation</a></li>
+                        <li><a href="#usage">Usage</a></li>
+                        <li><a href="#api">API Reference</a></li>
+                        <li><a href="#troubleshooting">Troubleshooting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://github.com/obi-wan-jr/devopsAi/issues">Issues</a></li>
+                        <li><a href="https://github.com/obi-wan-jr/devopsAi/discussions">Discussions</a></li>
+                        <li><a href="https://github.com/obi-wan-jr/devopsAi/wiki">Wiki</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AI System Administrator Agent. Built with ❤️ for Raspberry Pi 5.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

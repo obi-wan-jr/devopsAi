@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  ai-sysadmin-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-sysadmin-agent
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Web interface
+      - "8081:8081"  # API endpoints
+    volumes:
+      - ./models:/app/models:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # For Docker commands
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      - MODEL_PATH=/app/models/qwen2-1.5b-q4_k_m.gguf
+      - LOG_LEVEL=INFO
+      - WEB_HOST=0.0.0.0
+      - WEB_PORT=8080
+      - API_PORT=8081
+    user: "1000:1000"  # Run as non-root (adjust UID:GID as needed)
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      - ai-agent-network
+
+  # Optional: Separate service for model serving
+  llama-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.llama
+    container_name: llama-server
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./models:/app/models:ro
+    environment:
+      - MODEL_PATH=/app/models/qwen2-1.5b-q4_k_m.gguf
+      - HOST=0.0.0.0
+      - PORT=8082
+    user: "1000:1000"
+    networks:
+      - ai-agent-network
+
+networks:
+  ai-agent-network:
+    driver: bridge

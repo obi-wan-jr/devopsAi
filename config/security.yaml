@@ -1,0 +1,137 @@
+# Security Configuration for AI System Administrator Agent
+security:
+  # User and permissions
+  user:
+    name: "inggo"
+    group: "inggo"
+    run_as_non_root: true
+    sudo_required: true
+
+  # Command restrictions
+  commands:
+    # Allowed commands (whitelist)
+    allowed:
+      - "df"
+      - "du"
+      - "free"
+      - "top"
+      - "htop"
+      - "ps"
+      - "systemctl"
+      - "service"
+      - "docker"
+      - "docker-compose"
+      - "apt"
+      - "apt-get"
+      - "systemctl status"
+      - "systemctl start"
+      - "systemctl stop"
+      - "systemctl restart"
+      - "systemctl enable"
+      - "systemctl disable"
+      - "journalctl"
+      - "tail"
+      - "head"
+      - "grep"
+      - "find"
+      - "ls"
+      - "cat"
+      - "less"
+      - "more"
+      - "ping"
+      - "netstat"
+      - "ss"
+      - "lsof"
+      - "uptime"
+      - "who"
+      - "w"
+      - "last"
+      - "uname"
+      - "hostname"
+      - "date"
+      - "timedatectl"
+
+    # Forbidden commands (blacklist)
+    forbidden:
+      - "rm -rf /"
+      - "dd if=/dev/zero"
+      - "mkfs"
+      - "fdisk"
+      - "parted"
+      - "mount"
+      - "umount"
+      - "chmod 777"
+      - "chown root"
+      - "passwd"
+      - "useradd"
+      - "userdel"
+      - "groupadd"
+      - "groupdel"
+      - "su"
+      - "sudo su"
+      - "bash"
+      - "sh"
+      - "zsh"
+      - "python"
+      - "python3"
+      - "node"
+      - "npm"
+      - "pip"
+      - "curl"
+      - "wget"
+      - "git clone"
+      - "git pull"
+      - "git push"
+
+  # File system restrictions
+  filesystem:
+    allowed_paths:
+      - "/home/inggo"
+      - "/var/log"
+      - "/tmp"
+      - "/proc"
+      - "/sys"
+      - "/etc/systemd"
+      - "/etc/docker"
+    
+    forbidden_paths:
+      - "/root"
+      - "/etc/shadow"
+      - "/etc/passwd"
+      - "/etc/group"
+      - "/boot"
+      - "/dev"
+      - "/media"
+      - "/mnt"
+
+  # Network restrictions
+  network:
+    allowed_hosts:
+      - "localhost"
+      - "127.0.0.1"
+      - "::1"
+    
+    allowed_ports:
+      - "22"    # SSH
+      - "80"    # HTTP
+      - "443"   # HTTPS
+      - "8080"  # Web interface
+      - "8081"  # API
+      - "8082"  # LLM server
+
+  # Resource limits
+  limits:
+    max_memory_mb: 2048
+    max_cpu_percent: 80
+    max_execution_time_seconds: 300
+    max_concurrent_commands: 3
+
+  # Audit logging
+  audit:
+    enabled: true
+    log_file: "/home/inggo/ai-agent/logs/audit.log"
+    log_level: "INFO"
+    log_commands: true
+    log_responses: true
+    log_errors: true
+    retention_days: 30

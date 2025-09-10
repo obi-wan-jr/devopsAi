@@ -1,0 +1,36 @@
+# Interface Configuration for AI System Administrator Agent
+interfaces:
+  # CLI Interface
+  cli:
+    enabled: true
+    prompt: "SysAdmin Agent"
+    show_timestamps: true
+    auto_complete: true
+    
+  # Web Interface
+  web:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8080
+    title: "AI System Administrator Agent"
+    description: "Your AI-powered Linux system administration assistant"
+    theme: "default"
+    max_message_length: 10000
+    auto_refresh: true
+    
+  # REST API Interface
+  api:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8081
+    cors_origins: ["*"]
+    rate_limit: 100  # requests per minute
+    max_request_size: 1048576  # 1MB
+    
+  # WebSocket Interface
+  websocket:
+    enabled: true
+    path: "/ws"
+    max_connections: 10
+    ping_interval: 30
+    ping_timeout: 10

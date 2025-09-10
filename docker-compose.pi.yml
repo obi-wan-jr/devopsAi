@@ -1,0 +1,93 @@
+version: '3.8'
+
+# Docker Compose configuration optimized for Raspberry Pi 5
+services:
+  ai-sysadmin-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.pi
+    container_name: ai-sysadmin-agent
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Web interface
+      - "8081:8081"  # API endpoints
+    volumes:
+      - ./models:/app/models:ro
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # For Docker commands
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      - MODEL_PATH=/app/models/qwen2-1.5b-q4_k_m.gguf
+      - LOG_LEVEL=INFO
+      - WEB_HOST=0.0.0.0
+      - WEB_PORT=8080
+      - API_PORT=8081
+      - LLAMA_SERVER_URL=http://llama-server:8082
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    user: "1000:1000"  # Run as non-root (adjust UID:GID as needed)
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      - ai-agent-network
+    depends_on:
+      - llama-server
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
+
+  # LLM Server optimized for Pi 5
+  llama-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.llama.pi
+    container_name: llama-server
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./models:/app/models:ro
+    environment:
+      - MODEL_PATH=/app/models/qwen2-1.5b-q4_k_m.gguf
+      - HOST=0.0.0.0
+      - PORT=8082
+      - N_THREADS=4
+      - N_CTX=2048
+      - BATCH_SIZE=512
+    user: "1000:1000"
+    networks:
+      - ai-agent-network
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '3.0'
+        reservations:
+          memory: 2G
+          cpus: '2.0'
+
+networks:
+  ai-agent-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: ai-agent-br
+
+# Optional: Add volumes for persistent data
+volumes:
+  models:
+    driver: local
+  logs:
+    driver: local

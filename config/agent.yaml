@@ -1,0 +1,40 @@
+# AI System Administrator Agent Configuration
+agent:
+  name: "SysAdminAgent"
+  description: "AI-powered system administrator for Raspberry Pi"
+  version: "1.0.0"
+  
+  # Model configuration
+  model:
+    name: "qwen2-1.5b"
+    path: "/home/inggo/ai-agent/models/qwen2-1.5b-q4_k_m.gguf"
+    backend: "llama.cpp"  # or "ollama"
+    quantization: "Q4_K_M"
+    context_length: 2048
+    temperature: 0.7
+    top_p: 0.9
+    max_tokens: 512
+
+  # AutoGen configuration
+  autogen:
+    max_rounds: 10
+    human_input_mode: "NEVER"
+    code_execution_config: false
+    use_docker: false
+
+  # System capabilities
+  capabilities:
+    - "system_monitoring"
+    - "service_management"
+    - "process_control"
+    - "disk_management"
+    - "network_diagnostics"
+    - "log_analysis"
+    - "package_management"
+
+  # Response settings
+  response:
+    format: "conversational"
+    include_commands: true
+    explain_actions: true
+    confirm_destructive: true
