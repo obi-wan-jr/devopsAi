@@ -6,6 +6,7 @@ openai>=1.0.0
 # LLM Backend
 llama-cpp-python>=0.2.0
 huggingface-hub>=0.20.0
+ollama>=0.1.0
 
 # Web Interface
 fastapi>=0.104.0

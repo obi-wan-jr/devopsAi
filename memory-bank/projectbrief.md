@@ -10,10 +10,13 @@ Create a local AI-powered system administrator agent for Raspberry Pi 5 ("meatpi
 - **OS**: Latest Raspberry Pi OS or DietPi
 - **Installation Path**: `/home/inggo/ai-agent`
 
-### AI Framework & Model
+### AI Framework & Models
 - **Orchestration**: AutoGen (latest stable release)
-- **LLM Backend**: Qwen2 1.5B (quantized GGUF format preferred)
-- **Runtime**: llama.cpp (preferred) or ollama
+- **Dual Model Backend**: 
+  - Gemma 2 (2B parameters) - Port 11434
+  - DeepSeek-R1 Distill (1.5B parameters) - Port 11435
+- **Runtime**: Ollama optimized for ARM64
+- **API Gateway**: Dynamic model routing service
 - **Python Environment**: Dedicated virtual environment
 
 ### Agent Capabilities
@@ -28,7 +31,9 @@ Create a local AI-powered system administrator agent for Raspberry Pi 5 ("meatpi
 - CLI interface for direct interaction
 - Simple local web UI for browser-based access
 - REST API endpoints for programmatic access
+- API Gateway for dynamic model selection
 - Real-time response streaming
+- Model switching capabilities
 
 ### Security & Safety
 - Non-root execution
@@ -43,6 +48,9 @@ Create a local AI-powered system administrator agent for Raspberry Pi 5 ("meatpi
 - Troubleshooting tips
 - Security best practices
 - Sample prompts and test cases
+- Wiki.js documentation with model comparison
+- API Gateway usage instructions
+- Model selection guidelines
 
 ## Success Criteria
 1. Agent successfully installs and runs on Raspberry Pi 5

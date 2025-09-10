@@ -1,0 +1,186 @@
+version: '3.8'
+
+# Docker Compose configuration for Dual-Model AI System Administrator Agent
+# Features: Gemma 2 (2B) + DeepSeek-R1 Distill (1.5B) + API Gateway + Wiki.js
+services:
+  # Ollama service for Gemma 2 (2B parameters)
+  ollama-gemma2:
+    image: ollama/ollama:latest
+    container_name: ollama-gemma2
+    restart: unless-stopped
+    ports:
+      - "11434:11434"  # Gemma 2 API port
+    volumes:
+      - gemma2_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    user: "1000:1000"  # Run as non-root
+    networks:
+      - ai-agent-network
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '2.5'
+        reservations:
+          memory: 2G
+          cpus: '1.5'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Ollama service for DeepSeek-R1 Distill (1.5B parameters)
+  ollama-deepseek:
+    image: ollama/ollama:latest
+    container_name: ollama-deepseek
+    restart: unless-stopped
+    ports:
+      - "11435:11434"  # DeepSeek-R1 API port (mapped to external 11435)
+    volumes:
+      - deepseek_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    user: "1000:1000"  # Run as non-root
+    networks:
+      - ai-agent-network
+    deploy:
+      resources:
+        limits:
+          memory: 2.5G
+          cpus: '2.0'
+        reservations:
+          memory: 1.5G
+          cpus: '1.0'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # API Gateway for dynamic model routing
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway.pi
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Main API Gateway port
+      - "8081:8081"  # Admin/Status port
+    volumes:
+      - ./config:/app/config:ro
+      - ./logs:/app/logs
+    environment:
+      - GATEWAY_HOST=0.0.0.0
+      - GATEWAY_PORT=8080
+      - ADMIN_PORT=8081
+      - GEMMA2_URL=http://ollama-gemma2:11434
+      - DEEPSEEK_URL=http://ollama-deepseek:11434
+      - GEMMA2_MODEL=gemma2:2b
+      - DEEPSEEK_MODEL=deepseek-r1-distill:1.5b
+      - LOG_LEVEL=INFO
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      - ai-agent-network
+    depends_on:
+      ollama-gemma2:
+        condition: service_healthy
+      ollama-deepseek:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Wiki.js service for comprehensive documentation
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    container_name: wiki-js
+    restart: unless-stopped
+    ports:
+      - "3004:3000"  # Map internal port 3000 to external port 3004
+    volumes:
+      - wiki_data:/wiki/data
+      - wiki_logs:/wiki/logs
+    environment:
+      - DB_TYPE=sqlite
+      - DB_FILEPATH=/wiki/data/db.sqlite
+      - NODE_ENV=production
+      - WIKI_HOSTNAME=meatpi
+      - WIKI_PORT=3000
+      - WIKI_IS_HTTPS=false
+    user: "1000:1000"
+    networks:
+      - ai-agent-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  ai-agent-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: ai-agent-br
+
+volumes:
+  gemma2_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/inggo/ai-agent/data/gemma2
+  deepseek_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/inggo/ai-agent/data/deepseek
+  wiki_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/inggo/ai-agent/data/wiki
+  wiki_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/inggo/ai-agent/logs/wiki
