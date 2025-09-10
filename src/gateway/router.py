@@ -182,6 +182,7 @@ class APIGateway:
                        model=model_id, 
                        message_length=len(request.message),
                        user_model_preference=request.model)
+            print(f"DEBUG: Processing chat request for model {model_id}")
             
             try:
                 if request.stream:
@@ -190,9 +191,12 @@ class APIGateway:
                         media_type="text/plain"
                     )
                 else:
+                    logger.info("Attempting to get response", model=model_id, message_preview=request.message[:50])
                     response_text = await self._get_response(model_id, request.message)
                     
                     processing_time = (datetime.now() - start_time).total_seconds()
+                    
+                    logger.info("Response received", model=model_id, response_length=len(response_text))
                     
                     return ChatResponse(
                         response=response_text,
@@ -202,8 +206,10 @@ class APIGateway:
                     )
                     
             except Exception as e:
-                logger.error("Error processing chat request", error=str(e), model=model_id)
-                raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
+                error_msg = str(e) if str(e) else "Unknown error"
+                logger.error("Error processing chat request", error=error_msg, model=model_id, exc_info=True)
+                print(f"DEBUG: Exception caught: {type(e).__name__}: {error_msg}")
+                raise HTTPException(status_code=500, detail=f"Error processing request: {error_msg}")
         
         @self.app.post("/chat/{model_id}")
         async def chat_with_model(model_id: str, request: ChatRequest):
@@ -310,15 +316,26 @@ class APIGateway:
             }
         }
         
+        logger.info("Sending request to Ollama", model=model_id, url=config["url"], model_id=config["model_id"])
+        
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                f"{config['url']}/api/generate",
-                json=payload
-            )
-            response.raise_for_status()
-            
-            result = response.json()
-            return result.get("response", "No response generated")
+            try:
+                response = await client.post(
+                    f"{config['url']}/api/generate",
+                    json=payload
+                )
+                logger.info("Ollama response received", status_code=response.status_code)
+                response.raise_for_status()
+                
+                result = response.json()
+                logger.info("Response parsed successfully", response_length=len(result.get("response", "")))
+                return result.get("response", "No response generated")
+            except httpx.HTTPStatusError as e:
+                logger.error("HTTP error from Ollama", status_code=e.response.status_code, response_text=e.response.text[:200])
+                raise
+            except Exception as e:
+                logger.error("Unexpected error in _get_response", error=str(e), exc_info=True)
+                raise
     
     async def _stream_response(self, model_id: str, message: str):
         """Stream response from specified model"""
