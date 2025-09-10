@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI System Administrator Agent</title>
+    <title>AI System Administrator Agent Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>🤖 AI System Administrator Agent</h1>
+            <h1>🤖 AI System Administrator Agent Dashboard</h1>
             <p>Dual-Model AI Assistant for DevOps & System Administration</p>
         </div>
     </header>
@@ -20,6 +21,8 @@
             <ul>
                 <li><a href="#overview">Overview</a></li>
                 <li><a href="#models">Models</a></li>
+                <li><a href="#chat" class="nav-chat">💬 Chat</a></li>
+                <li><a href="#monitor" class="nav-monitor">📊 Monitor</a></li>
                 <li><a href="#api">API Usage</a></li>
                 <li><a href="#examples">Examples</a></li>
                 <li><a href="#management">Management</a></li>
@@ -92,6 +95,181 @@
                             <li>✅ Root cause investigation</li>
                             <li>✅ Strategic system planning</li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="chat">
+                <h2>💬 Interactive Chat Interface</h2>
+                <p>Chat directly with your AI agents using the interface below:</p>
+                
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <div class="model-selector">
+                            <h3>🤖 Select Model</h3>
+                            <div class="model-options">
+                                <label class="model-option">
+                                    <input type="radio" name="model" value="auto" checked>
+                                    <span class="model-name">🧠 Auto-Select</span>
+                                    <span class="model-desc">Let AI choose the best model</span>
+                                </label>
+                                <label class="model-option">
+                                    <input type="radio" name="model" value="gemma3">
+                                    <span class="model-name">⚡ Gemma 3 (1B)</span>
+                                    <span class="model-desc">Fast, general tasks</span>
+                                </label>
+                                <label class="model-option">
+                                    <input type="radio" name="model" value="deepseek">
+                                    <span class="model-name">🧠 DeepSeek-R1 (1.5B)</span>
+                                    <span class="model-desc">Complex analysis</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+                            <h3>⚡ Quick Actions</h3>
+                            <button class="quick-btn" data-action="system-status">System Status</button>
+                            <button class="quick-btn" data-action="docker-status">Docker Status</button>
+                            <button class="quick-btn" data-action="network-check">Network Check</button>
+                            <button class="quick-btn" data-action="security-check">Security Check</button>
+                            <button class="quick-btn" data-action="performance-analysis">Performance Analysis</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message system-message">
+                                <div class="message-content">
+                                    <strong>🤖 AI System Administrator Agent</strong><br>
+                                    Hello! I'm your AI system administrator assistant. I can help you with:
+                                    <ul>
+                                        <li>System monitoring and status checks</li>
+                                        <li>Docker container management</li>
+                                        <li>Network troubleshooting</li>
+                                        <li>Security analysis</li>
+                                        <li>Performance optimization</li>
+                                        <li>Command generation and scripts</li>
+                                    </ul>
+                                    How can I help you today?
+                                </div>
+                                <div class="message-time">System</div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input-container">
+                            <div class="input-wrapper">
+                                <textarea id="messageInput" placeholder="Ask me anything about system administration..." rows="3"></textarea>
+                                <button id="sendButton" class="send-btn">
+                                    <span class="send-icon">📤</span>
+                                    Send
+                                </button>
+                            </div>
+                            <div class="input-footer">
+                                <span class="model-indicator" id="modelIndicator">Auto-Select</span>
+                                <span class="connection-status" id="connectionStatus">🟢 Connected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="monitor">
+                <h2>📊 Command Execution Monitor</h2>
+                <p>Monitor real-time command execution and system activity:</p>
+                
+                <div class="monitor-container">
+                    <div class="monitor-sidebar">
+                        <div class="system-status">
+                            <h3>🖥️ System Status</h3>
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <span class="status-label">API Gateway</span>
+                                    <span class="status-value" id="gatewayStatus">Checking...</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Gemma 3</span>
+                                    <span class="status-value" id="gemmaStatus">Checking...</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">DeepSeek-R1</span>
+                                    <span class="status-value" id="deepseekStatus">Checking...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="monitor-controls">
+                            <h3>🎛️ Monitor Controls</h3>
+                            <div class="control-group">
+                                <label>
+                                    <input type="checkbox" id="autoRefresh" checked>
+                                    Auto Refresh
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="showTimestamps" checked>
+                                    Show Timestamps
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="filterErrors" checked>
+                                    Highlight Errors
+                                </label>
+                            </div>
+                            <div class="control-buttons">
+                                <button id="refreshBtn" class="control-btn">🔄 Refresh</button>
+                                <button id="clearBtn" class="control-btn">🗑️ Clear</button>
+                                <button id="exportBtn" class="control-btn">📥 Export</button>
+                            </div>
+                        </div>
+
+                        <div class="filter-section">
+                            <h3>🔍 Filters</h3>
+                            <div class="filter-group">
+                                <label>Service:</label>
+                                <select id="serviceFilter">
+                                    <option value="all">All Services</option>
+                                    <option value="api-gateway">API Gateway</option>
+                                    <option value="ollama-gemma3">Gemma 3</option>
+                                    <option value="ollama-deepseek">DeepSeek-R1</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Level:</label>
+                                <select id="levelFilter">
+                                    <option value="all">All Levels</option>
+                                    <option value="info">Info</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="error">Error</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="monitor-main">
+                        <div class="monitor-header">
+                            <h3>📋 Command Execution Log</h3>
+                            <div class="monitor-stats">
+                                <span class="stat-item">
+                                    <span class="stat-label">Total Commands:</span>
+                                    <span class="stat-value" id="totalCommands">0</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="stat-label">Success Rate:</span>
+                                    <span class="stat-value" id="successRate">0%</span>
+                                </span>
+                                <span class="stat-item">
+                                    <span class="stat-label">Avg Response:</span>
+                                    <span class="stat-value" id="avgResponse">0ms</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="log-container" id="logContainer">
+                            <div class="log-entry info">
+                                <div class="log-timestamp">2025-01-10 12:00:00</div>
+                                <div class="log-service">system</div>
+                                <div class="log-level">info</div>
+                                <div class="log-message">Command execution monitor started</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -234,6 +412,6 @@ curl http://meatpi:11435/api/tags</code></pre>
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

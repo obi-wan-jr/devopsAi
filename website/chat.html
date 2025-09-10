@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Chat Interface</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>💬 AI Agent Chat Interface</h1>
+            <p>Interactive chat with your AI System Administrator Agents</p>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        <div class="chat-sidebar">
+            <div class="model-selector">
+                <h3>🤖 Select Model</h3>
+                <div class="model-options">
+                    <label class="model-option">
+                        <input type="radio" name="model" value="auto" checked>
+                        <span class="model-name">🧠 Auto-Select</span>
+                        <span class="model-desc">Let AI choose the best model</span>
+                    </label>
+                    <label class="model-option">
+                        <input type="radio" name="model" value="gemma3">
+                        <span class="model-name">⚡ Gemma 3 (1B)</span>
+                        <span class="model-desc">Fast, general tasks</span>
+                    </label>
+                    <label class="model-option">
+                        <input type="radio" name="model" value="deepseek">
+                        <span class="model-name">🧠 DeepSeek-R1 (1.5B)</span>
+                        <span class="model-desc">Complex analysis</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h3>⚡ Quick Actions</h3>
+                <button class="quick-btn" data-action="system-status">System Status</button>
+                <button class="quick-btn" data-action="docker-status">Docker Status</button>
+                <button class="quick-btn" data-action="network-check">Network Check</button>
+                <button class="quick-btn" data-action="security-check">Security Check</button>
+                <button class="quick-btn" data-action="performance-analysis">Performance Analysis</button>
+            </div>
+
+            <div class="chat-settings">
+                <h3>⚙️ Settings</h3>
+                <label>
+                    <input type="checkbox" id="streaming" checked>
+                    Enable Streaming
+                </label>
+                <label>
+                    <input type="checkbox" id="show-timestamps" checked>
+                    Show Timestamps
+                </label>
+                <label>
+                    <input type="checkbox" id="auto-scroll" checked>
+                    Auto Scroll
+                </label>
+            </div>
+        </div>
+
+        <div class="chat-main">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message system-message">
+                    <div class="message-content">
+                        <strong>🤖 AI System Administrator Agent</strong><br>
+                        Hello! I'm your AI system administrator assistant. I can help you with:
+                        <ul>
+                            <li>System monitoring and status checks</li>
+                            <li>Docker container management</li>
+                            <li>Network troubleshooting</li>
+                            <li>Security analysis</li>
+                            <li>Performance optimization</li>
+                            <li>Command generation and scripts</li>
+                        </ul>
+                        How can I help you today?
+                    </div>
+                    <div class="message-time">System</div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Ask me anything about system administration..." rows="3"></textarea>
+                    <button id="sendButton" class="send-btn">
+                        <span class="send-icon">📤</span>
+                        Send
+                    </button>
+                </div>
+                <div class="input-footer">
+                    <span class="model-indicator" id="modelIndicator">Auto-Select</span>
+                    <span class="connection-status" id="connectionStatus">🟢 Connected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>AI is thinking...</p>
+    </div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>
