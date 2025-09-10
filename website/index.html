@@ -113,37 +113,114 @@
                         <code>python3 src/cli_chat.py</code>
                     </div>
                     
-                    <h3>📋 Available Commands</h3>
-                    <ul>
-                        <li><code>/help</code> - Show available commands</li>
-                        <li><code>/models</code> - List available AI models</li>
-                        <li><code>/model gemma3</code> - Switch to Gemma 3 model</li>
-                        <li><code>/model deepseek</code> - Switch to DeepSeek-R1 model</li>
-                        <li><code>/auto</code> - Use automatic model selection</li>
-                        <li><code>/quit</code> - Exit the chat</li>
-                    </ul>
+                    <h3>📋 Interactive Chat Commands</h3>
+                    <div class="command-table">
+                        <table>
+                            <tr><th>Command</th><th>Description</th></tr>
+                            <tr><td><code>/help</code></td><td>Show available commands</td></tr>
+                            <tr><td><code>/models</code></td><td>List available AI models</td></tr>
+                            <tr><td><code>/model gemma3</code></td><td>Switch to Gemma 3 model</td></tr>
+                            <tr><td><code>/model deepseek</code></td><td>Switch to DeepSeek-R1 model</td></tr>
+                            <tr><td><code>/auto</code></td><td>Use automatic model selection</td></tr>
+                            <tr><td><code>/quit</code></td><td>Exit the chat</td></tr>
+                        </table>
+                    </div>
                     
-                    <h3>🎯 Single Commands</h3>
+                    <h3>🎯 Single Command Usage</h3>
                     <div class="code-block">
-                        <code># Ask a quick question</code><br>
+                        <code># Ask a simple question</code><br>
                         <code>python3 src/cli_chat.py "Show me system status"</code><br><br>
                         <code># Use specific model</code><br>
-                        <code>python3 src/cli_chat.py --model deepseek "Analyze this error log"</code>
+                        <code>python3 src/cli_chat.py --model deepseek "Analyze this error log"</code><br><br>
+                        <code># Use Gemma 3 for quick tasks</code><br>
+                        <code>python3 src/cli_chat.py --model gemma3 "Generate a backup script"</code>
+                    </div>
+                    
+                    <h3>🧠 Model Selection Guide</h3>
+                    <div class="model-guide">
+                        <div class="model-section">
+                            <h4>⚡ Gemma 3 (1B) - Use for:</h4>
+                            <ul>
+                                <li>Fast responses for simple tasks</li>
+                                <li>System monitoring commands</li>
+                                <li>Script generation and automation</li>
+                                <li>Quick troubleshooting steps</li>
+                                <li>General system administration</li>
+                            </ul>
+                        </div>
+                        <div class="model-section">
+                            <h4>🧠 DeepSeek-R1 (1.5B) - Use for:</h4>
+                            <ul>
+                                <li>Complex reasoning and analysis</li>
+                                <li>Problem diagnosis and root cause analysis</li>
+                                <li>Decision making for system changes</li>
+                                <li>Detailed troubleshooting workflows</li>
+                                <li>Architecture planning and optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h3>📋 Common Use Cases</h3>
+                    <div class="use-cases">
+                        <div class="use-case">
+                            <h4>🔍 System Monitoring</h4>
+                            <div class="code-block">
+                                <code>python3 src/cli_chat.py "Show me current system resources"</code><br>
+                                <code>python3 src/cli_chat.py "What processes are using the most CPU?"</code><br>
+                                <code>python3 src/cli_chat.py "Check disk space usage"</code>
+                            </div>
+                        </div>
+                        
+                        <div class="use-case">
+                            <h4>🐳 Docker Management</h4>
+                            <div class="code-block">
+                                <code>python3 src/cli_chat.py "List all running Docker containers"</code><br>
+                                <code>python3 src/cli_chat.py "How do I restart a Docker container?"</code><br>
+                                <code>python3 src/cli_chat.py "Show me Docker container logs"</code>
+                            </div>
+                        </div>
+                        
+                        <div class="use-case">
+                            <h4>🌐 Network Troubleshooting</h4>
+                            <div class="code-block">
+                                <code>python3 src/cli_chat.py "Check network connectivity"</code><br>
+                                <code>python3 src/cli_chat.py "Show me open ports"</code><br>
+                                <code>python3 src/cli_chat.py "Test DNS resolution"</code>
+                            </div>
+                        </div>
+                        
+                        <div class="use-case">
+                            <h4>🔒 Security Analysis</h4>
+                            <div class="code-block">
+                                <code>python3 src/cli_chat.py --model deepseek "Analyze system security"</code><br>
+                                <code>python3 src/cli_chat.py "Check for failed login attempts"</code><br>
+                                <code>python3 src/cli_chat.py "Show me firewall status"</code>
+                            </div>
+                        </div>
+                        
+                        <div class="use-case">
+                            <h4>⚡ Performance Optimization</h4>
+                            <div class="code-block">
+                                <code>python3 src/cli_chat.py --model deepseek "My system is slow, help me optimize"</code><br>
+                                <code>python3 src/cli_chat.py "Analyze memory usage patterns"</code><br>
+                                <code>python3 src/cli_chat.py "Check for performance bottlenecks"</code>
+                            </div>
+                        </div>
                     </div>
                     
                     <h3>🔧 Alternative Access Methods</h3>
                     <div class="access-methods">
                         <div class="access-method">
-                            <h4>Direct API Calls</h4>
+                            <h4>Direct API Gateway</h4>
                             <div class="code-block">
                                 <code>curl -X POST http://localhost:9000/chat \</code><br>
                                 <code>  -H "Content-Type: application/json" \</code><br>
-                                <code>  -d '{"message": "Hello"}'</code>
+                                <code>  -d '{"message": "Hello, show me system status"}'</code>
                             </div>
                         </div>
                         
                         <div class="access-method">
-                            <h4>Model-Specific Access</h4>
+                            <h4>Direct Model Access</h4>
                             <div class="code-block">
                                 <code># Gemma 3 (Port 11434)</code><br>
                                 <code>curl http://localhost:11434/api/generate \</code><br>
@@ -152,6 +229,49 @@
                                 <code>curl http://localhost:11435/api/generate \</code><br>
                                 <code>  -d '{"model": "deepseek-r1:1.5b", "prompt": "Hello"}'</code>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <h3>🛠️ Troubleshooting</h3>
+                    <div class="troubleshooting">
+                        <div class="trouble-section">
+                            <h4>If CLI Chat Doesn't Start</h4>
+                            <div class="code-block">
+                                <code># Check if Python 3 is available</code><br>
+                                <code>python3 --version</code><br><br>
+                                <code># Install required dependencies</code><br>
+                                <code>pip3 install httpx</code><br><br>
+                                <code># Check if API Gateway is running</code><br>
+                                <code>curl http://localhost:9000/health</code>
+                            </div>
+                        </div>
+                        
+                        <div class="trouble-section">
+                            <h4>If Models Don't Respond</h4>
+                            <div class="code-block">
+                                <code># Check if Ollama services are running</code><br>
+                                <code>docker ps | grep ollama</code><br><br>
+                                <code># Check model availability</code><br>
+                                <code>curl http://localhost:11434/api/tags</code><br>
+                                <code>curl http://localhost:11435/api/tags</code>
+                            </div>
+                        </div>
+                        
+                        <div class="trouble-section">
+                            <h4>If API Gateway is Down</h4>
+                            <div class="code-block">
+                                <code># Restart the API Gateway</code><br>
+                                <code>cd /home/inggo/ai-agent</code><br>
+                                <code>docker-compose -f docker-compose.dual-models.yml restart api-gateway</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ready-section">
+                        <h3>🎉 You're Ready!</h3>
+                        <p>Your AI System Administrator Agent is now ready for terminal interaction. The CLI interface provides the most reliable way to interact with your AI engineer, with full access to both Gemma 3 and DeepSeek-R1 models.</p>
+                        <div class="code-block">
+                            <code>Start with: python3 src/cli_chat.py</code>
                         </div>
                     </div>
                 </div>

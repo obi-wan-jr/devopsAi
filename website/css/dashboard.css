@@ -647,6 +647,161 @@
     }
 }
 
+/* Terminal Access Styles */
+.terminal-instructions {
+    margin-top: 2rem;
+}
+
+.command-table {
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+
+.command-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.command-table th,
+.command-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.command-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.command-table code {
+    background: #f1f3f4;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.model-guide {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.model-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.model-section h4 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.model-section ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.model-section li {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.use-cases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.use-case {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.use-case h4 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.access-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.access-method {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.access-method h4 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.troubleshooting {
+    margin: 2rem 0;
+}
+
+.trouble-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: 1rem 0;
+}
+
+.trouble-section h4 {
+    margin-top: 0;
+    color: #e74c3c;
+}
+
+.ready-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.ready-section h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+.ready-section p {
+    margin: 1rem 0;
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.ready-section .code-block {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-top: 1rem;
+}
+
+.ready-section code {
+    color: white;
+    background: transparent;
+}
+
 .log-entry.new {
     animation: slideIn 0.3s ease-out;
 }
