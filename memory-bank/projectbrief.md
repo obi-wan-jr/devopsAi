@@ -13,8 +13,8 @@ Create a local AI-powered system administrator agent for Raspberry Pi 5 ("meatpi
 ### AI Framework & Models
 - **Orchestration**: AutoGen (latest stable release)
 - **Dual Model Backend**: 
-  - Gemma 2 (2B parameters) - Port 11434
-  - DeepSeek-R1 Distill (1.5B parameters) - Port 11435
+  - Gemma 3 (1B parameters) - Port 11434
+  - DeepSeek-R1 (1.5B parameters) - Port 11435
 - **Runtime**: Ollama optimized for ARM64
 - **API Gateway**: Dynamic model routing service
 - **Python Environment**: Dedicated virtual environment

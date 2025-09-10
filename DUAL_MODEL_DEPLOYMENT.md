@@ -4,8 +4,8 @@
 
 This deployment provides a sophisticated dual-model AI-powered system administrator agent for your Raspberry Pi 5 server "meatpi" with the following features:
 
-- **Gemma 2 (2B parameters)**: Google's efficient model for general system administration tasks
-- **DeepSeek-R1 Distill (1.5B parameters)**: Specialized model for complex reasoning and analysis
+- **Gemma 3 (1B parameters)**: Google's efficient model for general system administration tasks
+- **DeepSeek-R1 (1.5B parameters)**: Specialized model for complex reasoning and analysis
 - **API Gateway**: Intelligent routing between models based on query type
 - **Wiki.js**: Comprehensive documentation and knowledge base
 - **Containerized Deployment**: Docker Compose orchestration for reliability
@@ -44,7 +44,7 @@ This deployment provides a sophisticated dual-model AI-powered system administra
 
 Once deployed, access your services at:
 
-- **🧠 Gemma 2 API**: `http://meatpi:11434`
+- **🧠 Gemma 3 API**: `http://meatpi:11434`
 - **🧠 DeepSeek-R1 API**: `http://meatpi:11435`
 - **🌐 API Gateway**: `http://meatpi:8080`
 - **📚 Wiki.js**: `http://meatpi:3004`
@@ -53,7 +53,7 @@ Once deployed, access your services at:
 
 ## 🧠 Model Comparison & Usage
 
-### Gemma 2 (2B parameters) - Port 11434
+### Gemma 3 (1B parameters) - Port 11434
 **Best for**: General tasks, Code generation, System monitoring, Troubleshooting
 
 **Use when**:
@@ -67,13 +67,13 @@ Once deployed, access your services at:
 curl -X POST http://meatpi:11434/api/generate \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gemma2:2b",
+    "model": "gemma3:1b",
     "prompt": "Show me the current disk usage",
     "stream": false
   }'
 ```
 
-### DeepSeek-R1 Distill (1.5B parameters) - Port 11435
+### DeepSeek-R1 (1.5B parameters) - Port 11435
 **Best for**: Complex reasoning, Problem analysis, Decision making, Root cause analysis
 
 **Use when**:
@@ -87,7 +87,7 @@ curl -X POST http://meatpi:11434/api/generate \
 curl -X POST http://meatpi:11435/api/generate \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "deepseek-r1-distill:1.5b",
+    "model": "deepseek-r1:1.5b",
     "prompt": "Analyze why my system is running slowly",
     "stream": false
   }'
@@ -108,8 +108,8 @@ curl -X POST http://meatpi:8080/chat \
 
 **Specific model selection**:
 ```bash
-# Use Gemma 2 specifically
-curl -X POST http://meatpi:8080/chat/gemma2 \
+# Use Gemma 3 specifically
+curl -X POST http://meatpi:8080/chat/gemma3 \
   -H "Content-Type: application/json" \
   -d '{"message": "Show me running processes"}'
 
@@ -130,14 +130,14 @@ curl -X POST http://meatpi:8080/chat/deepseek \
 # View logs
 ./scripts/manage-dual-models.sh logs
 ./scripts/manage-dual-models.sh logs api-gateway
-./scripts/manage-dual-models.sh logs ollama-gemma2
+./scripts/manage-dual-models.sh logs ollama-gemma3
 ./scripts/manage-dual-models.sh logs ollama-deepseek
 
 # Start/stop/restart services
 ./scripts/manage-dual-models.sh start
 ./scripts/manage-dual-models.sh stop
 ./scripts/manage-dual-models.sh restart
-./scripts/manage-dual-models.sh restart ollama-gemma2
+./scripts/manage-dual-models.sh restart ollama-gemma3
 
 # Update services
 ./scripts/manage-dual-models.sh update
@@ -170,21 +170,21 @@ curl -X POST http://meatpi:8080/chat/deepseek \
 
 ## 🤖 AI Interaction Examples
 
-### System Monitoring Tasks (Gemma 2)
+### System Monitoring Tasks (Gemma 3)
 
 ```bash
 # Check system status
-curl -X POST http://meatpi:8080/chat/gemma2 \
+curl -X POST http://meatpi:8080/chat/gemma3 \
   -H "Content-Type: application/json" \
   -d '{"message": "Show me the current system status"}'
 
 # Monitor disk usage
-curl -X POST http://meatpi:8080/chat/gemma2 \
+curl -X POST http://meatpi:8080/chat/gemma3 \
   -H "Content-Type: application/json" \
   -d '{"message": "Check disk usage and show top directories"}'
 
 # List running processes
-curl -X POST http://meatpi:8080/chat/gemma2 \
+curl -X POST http://meatpi:8080/chat/gemma3 \
   -H "Content-Type: application/json" \
   -d '{"message": "Show me all running processes"}'
 ```
@@ -211,7 +211,7 @@ curl -X POST http://meatpi:8080/chat/deepseek \
 ### Auto-Selection Examples
 
 ```bash
-# Simple query (will use Gemma 2)
+# Simple query (will use Gemma 3)
 curl -X POST http://meatpi:8080/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Show me the current uptime"}'
@@ -247,12 +247,12 @@ GATEWAY_PORT: 8080
 ADMIN_PORT: 8081
 
 # Model URLs
-GEMMA2_URL: http://ollama-gemma2:11434
+GEMMA2_URL: http://ollama-gemma3:11434
 DEEPSEEK_URL: http://ollama-deepseek:11434
 
 # Model IDs
-GEMMA2_MODEL: gemma2:2b
-DEEPSEEK_MODEL: deepseek-r1-distill:1.5b
+GEMMA2_MODEL: gemma3:1b
+DEEPSEEK_MODEL: deepseek-r1:1.5b
 
 # Logging
 LOG_LEVEL: INFO
@@ -260,8 +260,8 @@ LOG_LEVEL: INFO
 
 ### Docker Compose Services
 
-- **ollama-gemma2**: Gemma 2 model serving (port 11434)
-- **ollama-deepseek**: DeepSeek-R1 Distill model serving (port 11435)
+- **ollama-gemma3**: Gemma 3 model serving (port 11434)
+- **ollama-deepseek**: DeepSeek-R1 model serving (port 11435)
 - **api-gateway**: Intelligent model routing (ports 8080, 8081)
 - **wiki**: Wiki.js documentation (port 3004)
 
@@ -278,7 +278,7 @@ LOG_LEVEL: INFO
 ### Resource Usage
 
 - **Memory**: ~6GB total
-  - Gemma 2: 3GB
+  - Gemma 3: 3GB
   - DeepSeek-R1: 2.5GB
   - API Gateway: 512MB
   - Wiki: 512MB
@@ -305,9 +305,9 @@ LOG_LEVEL: INFO
 
 2. **Models not loading**
    ```bash
-   ./scripts/manage-dual-models.sh restart ollama-gemma2
+   ./scripts/manage-dual-models.sh restart ollama-gemma3
    ./scripts/manage-dual-models.sh restart ollama-deepseek
-   ./scripts/manage-dual-models.sh logs ollama-gemma2
+   ./scripts/manage-dual-models.sh logs ollama-gemma3
    ```
 
 3. **API Gateway issues**
@@ -351,7 +351,7 @@ LOG_LEVEL: INFO
 3. **Model Re-download**
    ```bash
    ./scripts/manage-dual-models.sh stop
-   ssh inggo@meatpi "docker volume rm gemma2_data deepseek_data"
+   ssh inggo@meatpi "docker volume rm gemma3_data deepseek_data"
    ./scripts/deploy-dual-models.sh --no-models
    ```
 
@@ -393,7 +393,7 @@ LOG_LEVEL: INFO
 
 3. **Model Data Backup**
    ```bash
-   rsync -avz inggo@meatpi:/home/inggo/ai-agent/data/gemma2/ ./backup/gemma2/
+   rsync -avz inggo@meatpi:/home/inggo/ai-agent/data/gemma3/ ./backup/gemma3/
    rsync -avz inggo@meatpi:/home/inggo/ai-agent/data/deepseek/ ./backup/deepseek/
    ```
 
@@ -401,7 +401,7 @@ LOG_LEVEL: INFO
 
 ### Health Checks
 
-- **Gemma 2**: `http://meatpi:11434/api/tags`
+- **Gemma 3**: `http://meatpi:11434/api/tags`
 - **DeepSeek-R1**: `http://meatpi:11435/api/tags`
 - **API Gateway**: `http://meatpi:8080/health`
 - **Wiki**: `http://meatpi:3004`
@@ -421,8 +421,8 @@ ssh inggo@meatpi "df -h"
 
 ## 🎯 Success Criteria
 
-✅ **Gemma 2 (2B parameters)**: Successfully deployed and responding  
-✅ **DeepSeek-R1 Distill (1.5B parameters)**: Successfully deployed and responding  
+✅ **Gemma 3 (1B parameters)**: Successfully deployed and responding  
+✅ **DeepSeek-R1 (1.5B parameters)**: Successfully deployed and responding  
 ✅ **API Gateway**: Intelligent model routing working  
 ✅ **Wiki.js**: Documentation service on port 3004  
 ✅ **Dual Model Architecture**: Both models running simultaneously  
@@ -436,7 +436,7 @@ ssh inggo@meatpi "df -h"
 Your Dual-Model AI System Administrator Agent is now ready for production use on Raspberry Pi 5 "meatpi"! The system provides:
 
 - **Intelligent Model Selection**: Automatically chooses the best model for each task
-- **Specialized Capabilities**: Gemma 2 for general tasks, DeepSeek-R1 for complex analysis
+- **Specialized Capabilities**: Gemma 3 for general tasks, DeepSeek-R1 for complex analysis
 - **Comprehensive Documentation**: Wiki.js with detailed usage guidelines
 - **Easy Management**: Simple scripts for all operations
 - **Production-Ready**: Robust deployment with health monitoring

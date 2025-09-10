@@ -3,15 +3,15 @@ version: '3.8'
 # Docker Compose configuration for Dual-Model AI System Administrator Agent
 # Features: Gemma 2 (2B) + DeepSeek-R1 Distill (1.5B) + API Gateway + Wiki.js
 services:
-  # Ollama service for Gemma 2 (2B parameters)
-  ollama-gemma2:
+  # Ollama service for Gemma 3 1B parameters
+  ollama-gemma3:
     image: ollama/ollama:latest
-    container_name: ollama-gemma2
+    container_name: ollama-gemma3
     restart: unless-stopped
     ports:
-      - "11434:11434"  # Gemma 2 API port
+      - "11434:11434"  # Gemma 3 1B API port
     volumes:
-      - gemma2_data:/root/.ollama
+      - gemma3_data:/root/.ollama
     environment:
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_ORIGINS=*
@@ -21,11 +21,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3G
-          cpus: '2.5'
-        reservations:
           memory: 2G
-          cpus: '1.5'
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 30s
@@ -80,10 +80,10 @@ services:
       - GATEWAY_HOST=0.0.0.0
       - GATEWAY_PORT=8080
       - ADMIN_PORT=8081
-      - GEMMA2_URL=http://ollama-gemma2:11434
+      - GEMMA3_URL=http://ollama-gemma3:11434
       - DEEPSEEK_URL=http://ollama-deepseek:11434
-      - GEMMA2_MODEL=gemma2:2b
-      - DEEPSEEK_MODEL=deepseek-r1-distill:1.5b
+      - GEMMA3_MODEL=gemma3:1b
+      - DEEPSEEK_MODEL=deepseek-r1:1.5b
       - LOG_LEVEL=INFO
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
@@ -99,10 +99,8 @@ services:
     networks:
       - ai-agent-network
     depends_on:
-      ollama-gemma2:
-        condition: service_healthy
-      ollama-deepseek:
-        condition: service_healthy
+      - ollama-gemma3
+      - ollama-deepseek
     deploy:
       resources:
         limits:
@@ -160,12 +158,12 @@ networks:
       com.docker.network.bridge.name: ai-agent-br
 
 volumes:
-  gemma2_data:
+  gemma3_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/inggo/ai-agent/data/gemma2
+      device: /home/inggo/ai-agent/data/gemma3
   deepseek_data:
     driver: local
     driver_opts:

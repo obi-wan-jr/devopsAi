@@ -76,18 +76,18 @@ class APIGateway:
         
         # Model configurations
         self.models = {
-            "gemma2": {
-                "name": "Gemma 2",
-                "url": "http://ollama-gemma2:11434",
-                "model_id": "gemma2:2b",
-                "description": "Google's Gemma 2 (2B parameters) - Best for general system administration",
-                "strengths": ["General tasks", "Code generation", "System monitoring", "Troubleshooting"]
+            "gemma3": {
+                "name": "Gemma 3",
+                "url": "http://ollama-gemma3:11434",
+                "model_id": "gemma3:1b",
+                "description": "Google's Gemma 3 (1B parameters) - Best for general system administration",
+                "strengths": ["General tasks", "Code generation", "System monitoring", "Troubleshooting", "Fast responses"]
             },
             "deepseek": {
-                "name": "DeepSeek-R1 Distill",
+                "name": "DeepSeek-R1",
                 "url": "http://ollama-deepseek:11434", 
-                "model_id": "deepseek-r1-distill:1.5b",
-                "description": "DeepSeek-R1 Distill (1.5B parameters) - Best for reasoning and analysis",
+                "model_id": "deepseek-r1:1.5b",
+                "description": "DeepSeek-R1 (1.5B parameters) - Best for reasoning and analysis",
                 "strengths": ["Complex reasoning", "Problem analysis", "Decision making", "Root cause analysis"]
             }
         }
@@ -95,7 +95,7 @@ class APIGateway:
         # Statistics
         self.stats = {
             "total_requests": 0,
-            "requests_by_model": {"gemma2": 0, "deepseek": 0},
+            "requests_by_model": {"gemma3": 0, "deepseek": 0},
             "start_time": datetime.now()
         }
         
@@ -247,11 +247,11 @@ class APIGateway:
         deepseek_score = sum(1 for keyword in deepseek_keywords if keyword in message_lower)
         gemma_score = sum(1 for keyword in gemma_keywords if keyword in message_lower)
         
-        # Default to Gemma 2 for general tasks
+        # Default to Gemma 3 for general tasks
         if deepseek_score > gemma_score:
             return "deepseek"
         else:
-            return "gemma2"
+            return "gemma3"
     
     async def _get_response(self, model_id: str, message: str) -> str:
         """Get response from specified model"""
