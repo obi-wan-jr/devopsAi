@@ -84,28 +84,28 @@ class APIGateway:
             allow_headers=["*"],
         )
         
-        # Model configurations
+        # Model configurations - Optimized for Raspberry Pi 5
         self.models = {
-            "gemma3": {
-                "name": "Gemma 3",
+            "tinyllama": {
+                "name": "TinyLlama",
                 "url": "http://ollama-gemma3:11434",
-                "model_id": "gemma3:1b",
-                "description": "Google's Gemma 3 (1B parameters) - Best for general system administration",
-                "strengths": ["General tasks", "Code generation", "System monitoring", "Troubleshooting", "Fast responses"]
+                "model_id": "tinyllama:1.1b",
+                "description": "TinyLlama (1.1B parameters) - Ultra-fast responses for simple tasks",
+                "strengths": ["Ultra-fast responses", "Simple commands", "Quick answers", "Low resource usage"]
             },
-            "deepseek": {
-                "name": "DeepSeek-R1",
+            "qwen": {
+                "name": "Qwen2.5",
                 "url": "http://ollama-deepseek:11434", 
-                "model_id": "deepseek-r1:1.5b",
-                "description": "DeepSeek-R1 (1.5B parameters) - Best for reasoning and analysis",
-                "strengths": ["Complex reasoning", "Problem analysis", "Decision making", "Root cause analysis"]
+                "model_id": "qwen2.5:0.5b",
+                "description": "Qwen2.5 (0.5B parameters) - Lightweight but capable for system tasks",
+                "strengths": ["Lightweight", "System administration", "Code generation", "Efficient processing"]
             }
         }
         
         # Statistics
         self.stats = {
             "total_requests": 0,
-            "requests_by_model": {"gemma3": 0, "deepseek": 0},
+            "requests_by_model": {"tinyllama": 0, "qwen": 0},
             "start_time": datetime.now()
         }
         
@@ -278,28 +278,29 @@ class APIGateway:
         # Auto-selection based on message content
         message_lower = message.lower()
         
-        # Keywords that suggest DeepSeek-R1 is better
-        deepseek_keywords = [
+        # Keywords that suggest Qwen2.5 is better
+        qwen_keywords = [
             "analyze", "analysis", "why", "reason", "cause", "problem", "issue",
             "debug", "troubleshoot", "investigate", "compare", "decision",
-            "complex", "difficult", "challenging", "error", "failure"
+            "complex", "difficult", "challenging", "error", "failure",
+            "system", "admin", "administration", "script", "code"
         ]
         
-        # Keywords that suggest Gemma 2 is better  
-        gemma_keywords = [
+        # Keywords that suggest TinyLlama is better  
+        tinyllama_keywords = [
             "show", "list", "display", "get", "check", "status", "monitor",
-            "create", "generate", "write", "script", "command", "install",
-            "configure", "setup", "simple", "quick", "basic"
+            "create", "generate", "write", "command", "install",
+            "configure", "setup", "simple", "quick", "basic", "hello", "hi"
         ]
         
-        deepseek_score = sum(1 for keyword in deepseek_keywords if keyword in message_lower)
-        gemma_score = sum(1 for keyword in gemma_keywords if keyword in message_lower)
+        qwen_score = sum(1 for keyword in qwen_keywords if keyword in message_lower)
+        tinyllama_score = sum(1 for keyword in tinyllama_keywords if keyword in message_lower)
         
-        # Default to Gemma 3 for general tasks
-        if deepseek_score > gemma_score:
-            return "deepseek"
+        # Default to TinyLlama for general tasks (faster)
+        if qwen_score > tinyllama_score:
+            return "qwen"
         else:
-            return "gemma3"
+            return "tinyllama"
     
     async def _get_response(self, model_id: str, message: str) -> str:
         """Get response from specified model"""
@@ -318,7 +319,7 @@ class APIGateway:
         
         logger.info("Sending request to Ollama", model=model_id, url=config["url"], model_id=config["model_id"])
         
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=60.0) as client:
             try:
                 response = await client.post(
                     f"{config['url']}/api/generate",

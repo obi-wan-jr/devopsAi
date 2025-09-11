@@ -120,11 +120,11 @@ class AIChatCLI:
                         continue
                     elif user_input.startswith('/model '):
                         model_name = user_input[7:].strip()
-                        if model_name in ['gemma3', 'deepseek']:
+                        if model_name in ['tinyllama', 'qwen']:
                             current_model = model_name
                             print(f"✅ Switched to {model_name}")
                         else:
-                            print("❌ Invalid model. Use 'gemma3' or 'deepseek'")
+                            print("❌ Invalid model. Use 'tinyllama' or 'qwen'")
                         continue
                     elif user_input == '/auto':
                         current_model = None
@@ -170,7 +170,7 @@ class AIChatCLI:
 async def main():
     parser = argparse.ArgumentParser(description="AI System Administrator Agent CLI")
     parser.add_argument("--url", default="http://localhost:9000", help="API Gateway URL")
-    parser.add_argument("--model", choices=["gemma3", "deepseek"], help="Specific model to use")
+    parser.add_argument("--model", choices=["tinyllama", "qwen"], help="Specific model to use")
     parser.add_argument("message", nargs="*", help="Message to send (if not provided, starts interactive mode)")
     
     args = parser.parse_args()

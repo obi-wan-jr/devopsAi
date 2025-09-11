@@ -37,17 +37,17 @@
                 
                 <div class="model-cards">
                     <div class="model-card gemma">
-                        <h3>🧠 Gemma 3 (1B parameters)</h3>
-                        <p><strong>Best for:</strong> Fast responses, general tasks, system monitoring, script generation</p>
+                        <h3>⚡ TinyLlama (1.1B parameters)</h3>
+                        <p><strong>Best for:</strong> Ultra-fast responses, simple commands, quick answers, low resource usage</p>
                         <p><strong>Port:</strong> 11434</p>
-                        <p><strong>Use when:</strong> You need quick answers for common system admin tasks</p>
+                        <p><strong>Use when:</strong> You need instant responses for basic questions and commands</p>
                     </div>
                     
                     <div class="model-card deepseek">
-                        <h3>🧠 DeepSeek-R1 (1.5B parameters)</h3>
-                        <p><strong>Best for:</strong> Complex reasoning, problem analysis, troubleshooting, decision making</p>
+                        <h3>🎯 Qwen2.5 (0.5B parameters)</h3>
+                        <p><strong>Best for:</strong> Lightweight system administration, code generation, efficient processing</p>
                         <p><strong>Port:</strong> 11435</p>
-                        <p><strong>Use when:</strong> You need deep analysis or complex problem-solving</p>
+                        <p><strong>Use when:</strong> You need capable but efficient system admin assistance</p>
                     </div>
                 </div>
 
@@ -73,26 +73,26 @@
                 
                 <div class="model-guide">
                     <div class="guide-section">
-                        <h3>When to Use Gemma 3</h3>
+                        <h3>When to Use TinyLlama (Ultra-Fast)</h3>
                         <ul>
-                            <li>✅ Quick system status checks</li>
-                            <li>✅ Command generation and scripts</li>
-                            <li>✅ Simple troubleshooting</li>
-                            <li>✅ File operations and directory listings</li>
-                            <li>✅ Service management (start/stop/restart)</li>
-                            <li>✅ Basic system monitoring</li>
+                            <li>✅ Simple questions and greetings</li>
+                            <li>✅ Basic math and calculations</li>
+                            <li>✅ Quick command help</li>
+                            <li>✅ Fast responses for simple tasks</li>
+                            <li>✅ Low resource usage</li>
+                            <li>✅ Instant feedback</li>
                         </ul>
                     </div>
                     
                     <div class="guide-section">
-                        <h3>When to Use DeepSeek-R1</h3>
+                        <h3>When to Use Qwen2.5 (Efficient)</h3>
                         <ul>
-                            <li>✅ Deep system analysis</li>
-                            <li>✅ Complex problem troubleshooting</li>
-                            <li>✅ Performance optimization decisions</li>
-                            <li>✅ Security vulnerability analysis</li>
-                            <li>✅ Root cause investigation</li>
-                            <li>✅ Strategic system planning</li>
+                            <li>✅ System administration tasks</li>
+                            <li>✅ Code generation and scripts</li>
+                            <li>✅ File operations and directory listings</li>
+                            <li>✅ Service management (start/stop/restart)</li>
+                            <li>✅ Basic troubleshooting</li>
+                            <li>✅ Lightweight but capable processing</li>
                         </ul>
                     </div>
                 </div>
@@ -109,6 +109,8 @@
                         <code>ssh inggo@meatpi</code><br><br>
                         <code># Navigate to the project directory</code><br>
                         <code>cd /home/inggo/ai-agent</code><br><br>
+                        <code># Test with a simple question (works great!)</code><br>
+                        <code>python3 src/cli_chat.py "Hello, how are you?"</code><br><br>
                         <code># Start interactive chat</code><br>
                         <code>python3 src/cli_chat.py</code>
                     </div>
