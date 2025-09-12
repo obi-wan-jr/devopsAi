@@ -66,3 +66,5 @@
 - **Response Time**: <5 seconds for simple queries
 - **Concurrent Users**: 1-3 simultaneous sessions
 - **Storage**: Minimal disk usage for logs and configs
+
+

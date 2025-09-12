@@ -1,19 +1,23 @@
 """
-API Gateway Router for Dual-Model AI System Administrator Agent
-Routes queries between Gemma 2 and DeepSeek-R1 Distill models
+API Gateway Router for Remote LLM AI System Administrator Agent
+Routes queries to remote Qwen3-4B-Thinking service
 """
 
 import asyncio
 import json
 import logging
+import os
+import time
+from collections import defaultdict
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import httpx
 import structlog
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 
 # Configure structured logging
@@ -75,42 +79,77 @@ class APIGateway:
             version="2.0.0"
         )
         
-        # Add CORS middleware
+        # Security configuration
+        self.api_key = os.getenv("API_KEY")  # Optional API key for authentication
+        self.allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3004,http://localhost:8080,http://127.0.0.1:3004,http://127.0.0.1:8080").split(",")
+
+        # Rate limiting (requests per minute per IP)
+        self.rate_limit_per_minute = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+        self.rate_limit_window = timedelta(minutes=1)
+        self.request_counts = defaultdict(list)  # IP -> list of timestamps
+
+        # API Key security scheme
+        self.api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+        # Add CORS middleware with configurable origins
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["*"],  # Allow all origins for development
+            allow_origins=self.allowed_origins,
             allow_credentials=True,
-            allow_methods=["*"],
+            allow_methods=["GET", "POST", "OPTIONS"],
             allow_headers=["*"],
         )
         
-        # Model configurations - Optimized for Raspberry Pi 5
+        # Model configurations - Using remote LLM service
+        remote_llm_url = os.getenv("REMOTE_LLM_URL", "http://100.79.227.126:1234")
+        remote_llm_model = os.getenv("REMOTE_LLM_MODEL", "qwen/qwen3-4b-thinking-2507")
+
         self.models = {
-            "tinyllama": {
-                "name": "TinyLlama",
-                "url": "http://ollama-gemma3:11434",
-                "model_id": "tinyllama:1.1b",
-                "description": "TinyLlama (1.1B parameters) - Ultra-fast responses for simple tasks",
-                "strengths": ["Ultra-fast responses", "Simple commands", "Quick answers", "Low resource usage"]
-            },
-            "qwen": {
-                "name": "Qwen2.5",
-                "url": "http://ollama-deepseek:11434", 
-                "model_id": "qwen2.5:0.5b",
-                "description": "Qwen2.5 (0.5B parameters) - Lightweight but capable for system tasks",
-                "strengths": ["Lightweight", "System administration", "Code generation", "Efficient processing"]
+            "qwen3": {
+                "name": "Qwen3-4B-Thinking",
+                "url": remote_llm_url,
+                "model_id": remote_llm_model,
+                "description": f"Qwen3-4B-Thinking - Advanced reasoning model for complex system administration tasks hosted at {remote_llm_url}",
+                "strengths": ["Advanced reasoning", "Complex problem solving", "System analysis", "Decision making", "Root cause analysis", "Code generation"]
             }
         }
         
         # Statistics
         self.stats = {
             "total_requests": 0,
-            "requests_by_model": {"tinyllama": 0, "qwen": 0},
+            "requests_by_model": {"qwen3": 0},
             "start_time": datetime.now()
         }
         
         # Setup routes
         self._setup_routes()
+
+    async def _authenticate(self, api_key: str = Depends(APIKeyHeader(name="X-API-Key", auto_error=False))):
+        """Optional API key authentication"""
+        if self.api_key and api_key != self.api_key:
+            raise HTTPException(status_code=401, detail="Invalid API key")
+        return True
+
+    async def _check_rate_limit(self, request: Request):
+        """Simple rate limiting per IP"""
+        client_ip = request.client.host
+        now = datetime.now()
+
+        # Clean old timestamps
+        self.request_counts[client_ip] = [
+            ts for ts in self.request_counts[client_ip]
+            if now - ts < self.rate_limit_window
+        ]
+
+        # Check if over limit
+        if len(self.request_counts[client_ip]) >= self.rate_limit_per_minute:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Rate limit exceeded. Maximum {self.rate_limit_per_minute} requests per minute."
+            )
+
+        # Add current request
+        self.request_counts[client_ip].append(now)
         
     def _setup_routes(self):
         """Setup FastAPI routes"""
@@ -128,7 +167,7 @@ class APIGateway:
             for model_id, config in self.models.items():
                 try:
                     async with httpx.AsyncClient(timeout=5.0) as client:
-                        response = await client.get(f"{config['url']}/api/tags")
+                        response = await client.get(f"{config['url']}/v1/models")
                         status = "healthy" if response.status_code == 200 else "unhealthy"
                 except Exception:
                     status = "unhealthy"
@@ -167,10 +206,13 @@ class APIGateway:
             }
         
         @self.app.post("/chat", response_model=ChatResponse)
-        async def chat(request: ChatRequest):
+        async def chat(request: ChatRequest, req: Request, auth: bool = Depends(self._authenticate)):
             """Main chat endpoint with dynamic model routing"""
+            # Check rate limit
+            await self._check_rate_limit(req)
+
             start_time = datetime.now()
-            
+
             # Determine which model to use
             model_id = self._select_model(request.model, request.message)
             
@@ -212,11 +254,14 @@ class APIGateway:
                 raise HTTPException(status_code=500, detail=f"Error processing request: {error_msg}")
         
         @self.app.post("/chat/{model_id}")
-        async def chat_with_model(model_id: str, request: ChatRequest):
+        async def chat_with_model(model_id: str, request: ChatRequest, req: Request, auth: bool = Depends(self._authenticate)):
             """Chat with a specific model"""
+            # Check rate limit
+            await self._check_rate_limit(req)
+
             if model_id not in self.models:
                 raise HTTPException(status_code=404, detail=f"Model {model_id} not found")
-            
+
             # Override model selection
             request.model = model_id
             return await chat(request)
@@ -244,18 +289,18 @@ class APIGateway:
             
             config = self.models[model_id]
             
-            # Get model list from Ollama
+            # Get model list from remote LLM service
             try:
                 async with httpx.AsyncClient(timeout=10.0) as client:
-                    response = await client.get(f"{config['url']}/api/tags")
+                    response = await client.get(f"{config['url']}/v1/models")
                     response.raise_for_status()
-                    ollama_data = response.json()
+                    models_data = response.json()
                     
                 return {
                     "model_id": model_id,
                     "name": config["name"],
                     "description": config["description"],
-                    "ollama_models": ollama_data.get("models", []),
+                    "available_models": models_data.get("data", []),
                     "status": "available"
                 }
             except Exception as e:
@@ -263,7 +308,7 @@ class APIGateway:
                     "model_id": model_id,
                     "name": config["name"],
                     "description": config["description"],
-                    "ollama_models": [],
+                    "available_models": [],
                     "status": "error",
                     "error": str(e)
                 }
@@ -271,36 +316,13 @@ class APIGateway:
     def _select_model(self, user_preference: Optional[str], message: str) -> str:
         """Select the best model for the given request"""
         
-        # If user specified a model, use it
+        # If user specified a model, use it (if available)
         if user_preference and user_preference in self.models:
             return user_preference
         
-        # Auto-selection based on message content
-        message_lower = message.lower()
-        
-        # Keywords that suggest Qwen2.5 is better
-        qwen_keywords = [
-            "analyze", "analysis", "why", "reason", "cause", "problem", "issue",
-            "debug", "troubleshoot", "investigate", "compare", "decision",
-            "complex", "difficult", "challenging", "error", "failure",
-            "system", "admin", "administration", "script", "code"
-        ]
-        
-        # Keywords that suggest TinyLlama is better  
-        tinyllama_keywords = [
-            "show", "list", "display", "get", "check", "status", "monitor",
-            "create", "generate", "write", "command", "install",
-            "configure", "setup", "simple", "quick", "basic", "hello", "hi"
-        ]
-        
-        qwen_score = sum(1 for keyword in qwen_keywords if keyword in message_lower)
-        tinyllama_score = sum(1 for keyword in tinyllama_keywords if keyword in message_lower)
-        
-        # Default to TinyLlama for general tasks (faster)
-        if qwen_score > tinyllama_score:
-            return "qwen"
-        else:
-            return "tinyllama"
+        # Since we only have one model (Qwen3-4B-Thinking), always use it
+        # This model is capable of handling all types of system administration tasks
+        return "qwen3"
     
     async def _get_response(self, model_id: str, message: str) -> str:
         """Get response from specified model"""
@@ -308,31 +330,45 @@ class APIGateway:
         
         payload = {
             "model": config["model_id"],
-            "prompt": message,
-            "stream": False,
-            "options": {
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "max_tokens": 2048
-            }
+            "messages": [
+                {
+                    "role": "user",
+                    "content": message
+                }
+            ],
+            "max_tokens": 1024,
+            "temperature": 0.7,
+            "top_p": 0.9
         }
         
-        logger.info("Sending request to Ollama", model=model_id, url=config["url"], model_id=config["model_id"])
+        logger.info("Sending request to remote LLM", model=model_id, url=config["url"], model_id=config["model_id"])
         
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             try:
                 response = await client.post(
-                    f"{config['url']}/api/generate",
+                    f"{config['url']}/v1/chat/completions",
                     json=payload
                 )
-                logger.info("Ollama response received", status_code=response.status_code)
+                logger.info("Remote LLM response received", status_code=response.status_code)
                 response.raise_for_status()
                 
                 result = response.json()
-                logger.info("Response parsed successfully", response_length=len(result.get("response", "")))
-                return result.get("response", "No response generated")
+                logger.info("Response parsed successfully", response_length=len(result.get("choices", [{}])[0].get("message", {}).get("content", "")))
+                
+                # Extract response from OpenAI-compatible format
+                if "choices" in result and len(result["choices"]) > 0:
+                    message = result["choices"][0]["message"]
+                    # Qwen3-4B-Thinking puts response in reasoning_content if content is empty
+                    if message.get("content"):
+                        return message["content"]
+                    elif message.get("reasoning_content"):
+                        return message["reasoning_content"]
+                    else:
+                        return "No response generated"
+                else:
+                    return "No response generated"
             except httpx.HTTPStatusError as e:
-                logger.error("HTTP error from Ollama", status_code=e.response.status_code, response_text=e.response.text[:200])
+                logger.error("HTTP error from remote LLM", status_code=e.response.status_code, response_text=e.response.text[:200])
                 raise
             except Exception as e:
                 logger.error("Unexpected error in _get_response", error=str(e), exc_info=True)
@@ -344,29 +380,37 @@ class APIGateway:
         
         payload = {
             "model": config["model_id"],
-            "prompt": message,
-            "stream": True,
-            "options": {
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "max_tokens": 2048
-            }
+            "messages": [
+                {
+                    "role": "user",
+                    "content": message
+                }
+            ],
+            "max_tokens": 1024,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "stream": True
         }
         
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             async with client.stream(
                 "POST",
-                f"{config['url']}/api/generate",
+                f"{config['url']}/v1/chat/completions",
                 json=payload
             ) as response:
                 response.raise_for_status()
                 
                 async for line in response.aiter_lines():
-                    if line.strip():
+                    if line.strip() and line.startswith("data: "):
                         try:
-                            data = json.loads(line)
-                            if "response" in data:
-                                yield data["response"]
+                            data = json.loads(line[6:])  # Remove "data: " prefix
+                            if "choices" in data and len(data["choices"]) > 0:
+                                delta = data["choices"][0].get("delta", {})
+                                # Handle both content and reasoning_content
+                                if "content" in delta:
+                                    yield delta["content"]
+                                elif "reasoning_content" in delta:
+                                    yield delta["reasoning_content"]
                         except json.JSONDecodeError:
                             continue
 

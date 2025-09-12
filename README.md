@@ -1,16 +1,17 @@
 # AI System Administrator Agent
 
-An AI-powered system administrator agent designed specifically for Raspberry Pi 5, using AutoGen for orchestration and Qwen2 1.5B as the reasoning engine. This agent can handle Linux system administration and DevOps tasks through conversational AI interactions.
+An AI-powered system administrator agent designed specifically for Raspberry Pi 5, using a remote Qwen3-4B-Thinking service for advanced reasoning. This agent can handle Linux system administration and DevOps tasks through conversational AI interactions with ultra-low resource usage (~384MB memory).
 
 ## 🚀 Features
 
 - **AI-Powered System Administration**: Conversational interface for Linux system tasks
-- **Raspberry Pi 5 Optimized**: Designed specifically for ARM64 architecture
-- **Secure Command Execution**: Whitelist-based security with audit logging
+- **Raspberry Pi 5 Optimized**: Designed specifically for ARM64 architecture with minimal resource usage
+- **Remote Qwen3-4B-Thinking**: Advanced reasoning model hosted remotely for complex analysis
+- **API Gateway**: Intelligent routing with security and rate limiting
+- **Documentation Site**: Wiki.js documentation and API reference on port 3004
+- **Ultra-Low Resource Usage**: ~384MB memory vs ~6GB with local models
+- **Secure Command Execution**: Whitelist-based security with audit logging (legacy mode)
 - **Multiple Interfaces**: CLI, Web UI, and REST API
-- **Real-time Monitoring**: System resource monitoring and service management
-- **AutoGen Integration**: Advanced multi-agent conversation framework
-- **Qwen2 1.5B Backend**: Efficient, quantized language model
 
 ## 📋 Requirements
 
@@ -28,7 +29,7 @@ An AI-powered system administrator agent designed specifically for Raspberry Pi 
 
 ## 🛠️ Installation
 
-### Quick Installation
+### Quick Installation (Remote LLM)
 
 1. **Clone the repository**:
    ```bash
@@ -36,21 +37,21 @@ An AI-powered system administrator agent designed specifically for Raspberry Pi 
    cd ai-sysadmin-agent
    ```
 
-2. **Run the installation script**:
+2. **Deploy to Raspberry Pi**:
    ```bash
-   chmod +x scripts/install.sh
-   ./scripts/install.sh
+   # From local machine
+   chmod +x scripts/deploy-remote-llm.sh
+   ./scripts/deploy-remote-llm.sh
    ```
 
-3. **Start the agent**:
-   ```bash
-   cd /home/inggo/ai-agent
-   ./start.sh
-   ```
+3. **Access the services**:
+   - **API Gateway**: `http://your-pi-ip:4000`
+   - **Documentation**: `http://your-pi-ip:3004`
+   - **Health Check**: `http://your-pi-ip:4000/health`
 
-### Manual Installation
+### Legacy Installation (Local Models)
 
-If you prefer manual installation or need to customize the setup:
+If you prefer the legacy mode with local models:
 
 1. **Update system packages**:
    ```bash
@@ -58,79 +59,67 @@ If you prefer manual installation or need to customize the setup:
    sudo apt install -y build-essential cmake git python3 python3-pip python3-venv
    ```
 
-2. **Create project directory**:
-   ```bash
-   mkdir -p /home/inggo/ai-agent
-   cd /home/inggo/ai-agent
-   ```
-
-3. **Set up Python environment**:
+2. **Set up Python environment**:
    ```bash
    python3 -m venv ai-agent-env
    source ai-agent-env/bin/activate
    pip install --upgrade pip
-   ```
-
-4. **Install dependencies**:
-   ```bash
    pip install -r requirements.txt
    ```
 
-5. **Download the model**:
+3. **Download models and build**:
    ```bash
    chmod +x scripts/setup_model.sh
    ./scripts/setup_model.sh
-   ```
-
-6. **Build llama.cpp**:
-   ```bash
    git clone https://github.com/ggerganov/llama.cpp.git
-   cd llama.cpp
-   make -j$(nproc)
+   cd llama.cpp && make -j$(nproc)
    ```
 
 ## 🎯 Usage
 
-### Web Interface
+### Remote LLM Mode (Recommended)
 
-The easiest way to interact with the agent is through the web interface:
+The easiest way to interact with the agent is through the API Gateway:
 
-1. **Start the agent**:
+1. **Access the API Gateway**:
+   ```
+   http://your-pi-ip:4000
+   ```
+
+2. **Check documentation**:
+   ```
+   http://your-pi-ip:3004
+   ```
+
+3. **API usage**:
    ```bash
-   cd /home/inggo/ai-agent
-   ./start.sh
-   ```
+   # Send a chat request
+   curl -X POST http://your-pi-ip:4000/chat \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Check disk usage"}'
 
-2. **Open your browser** and navigate to:
+   # Check health
+   curl http://your-pi-ip:4000/health
    ```
-   http://your-pi-ip:8080
-   ```
-
-3. **Start chatting** with the agent about system administration tasks!
 
 ### CLI Interface
 
-For command-line usage:
+For command-line usage with the remote LLM:
 
 ```bash
-cd /home/inggo/ai-agent
-source ai-agent-env/bin/activate
-python -m src.interfaces.cli
+# Install CLI dependencies
+pip install httpx rich
+
+# Run interactive chat
+python -m src.cli_chat
+
+# Or specify API URL
+python -m src.cli_chat --url http://your-pi-ip:4000
 ```
 
-### API Interface
+### Legacy Mode (Local Models)
 
-The agent also provides a REST API:
-
-```bash
-# Send a request
-curl -X POST http://localhost:8081/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Check disk usage"}'
-
-# Get agent status
-curl http://localhost:8081/api/status
-```
+For the legacy mode with local models, see the deployment documentation.
 
 ## 💬 Example Prompts
 
@@ -170,54 +159,54 @@ Here are some example prompts you can try with the agent:
 
 ## 🔧 Configuration
 
-### Agent Configuration (`config/agent.yaml`)
+### Remote LLM Configuration
+
+The API Gateway is configured via environment variables in `docker-compose.remote-llm.yml`:
 
 ```yaml
-agent:
-  name: "SysAdminAgent"
-  model:
-    path: "/home/inggo/ai-agent/models/qwen2-1.5b-q4_k_m.gguf"
-    backend: "llama.cpp"
-    context_length: 2048
-    temperature: 0.7
+environment:
+  - REMOTE_LLM_URL=http://100.79.227.126:1234
+  - REMOTE_LLM_MODEL=qwen/qwen3-4b-thinking-2507
+  - API_KEY=your-optional-api-key  # Optional authentication
+  - RATE_LIMIT_PER_MINUTE=60       # Rate limiting
+  - ALLOWED_ORIGINS=http://localhost:3004,http://localhost:8080
 ```
 
-### Security Configuration (`config/security.yaml`)
+### Ports
 
-```yaml
-security:
-  commands:
-    allowed:
-      - "df"
-      - "du"
-      - "systemctl"
-      - "ps"
-      # ... more allowed commands
-    forbidden:
-      - "rm -rf /"
-      - "sudo su"
-      - "passwd"
-      # ... more forbidden commands
-```
+- **API Gateway**: `4000` (maps to container port `8080`)
+- **Documentation Site**: `3004`
+- **Health Check**: `4000/health`
 
-### Interface Configuration (`config/interfaces.yaml`)
+### Legacy Configuration (Local Models)
 
-```yaml
-interfaces:
-  web:
-    enabled: true
-    host: "0.0.0.0"
-    port: 8080
-  cli:
-    enabled: true
-  api:
-    enabled: true
-    port: 8081
-```
+For legacy mode with local models, see the configuration files in `config/` directory and the deprecated `docker-compose.dual-models.yml`.
+
+## 🚀 Deployment Modes
+
+This project supports two deployment modes:
+
+### 1. Remote LLM Mode (Recommended)
+- **Pros**: Ultra-low resource usage (~384MB), advanced reasoning, fast deployment
+- **Cons**: Requires network connectivity to remote LLM service
+- **Use case**: Production deployment on resource-constrained systems
+- **Files**: `docker-compose.remote-llm.yml`, `scripts/deploy-remote-llm.sh`
+
+### 2. Local Models Mode (Legacy)
+- **Pros**: No network dependency, full local control
+- **Cons**: High resource usage (~6GB memory), slower deployment, complex setup
+- **Use case**: Offline environments, development/testing
+- **Files**: `docker-compose.dual-models.yml` (deprecated), `scripts/deploy-dual-models.sh` (deprecated)
 
 ## 🔒 Security Features
 
-### Command Validation
+### API Gateway Security
+- **Optional API Key Authentication**: Configurable via `API_KEY` environment variable
+- **Rate Limiting**: Configurable per-IP rate limiting (default: 60 requests/minute)
+- **CORS Protection**: Restrict origins to allowed domains
+- **Request Validation**: Input sanitization and validation
+
+### Legacy Command Validation (Local Mode)
 - **Whitelist-based**: Only pre-approved commands can be executed
 - **Pattern matching**: Blocks dangerous command patterns
 - **Path restrictions**: Prevents access to sensitive directories
@@ -237,23 +226,32 @@ interfaces:
 
 ## 🐳 Docker Deployment
 
-For containerized deployment:
+### Remote LLM Deployment (Recommended)
 
-1. **Build the containers**:
+For the remote LLM deployment:
+
+1. **Deploy to Raspberry Pi**:
    ```bash
-   docker-compose build
+   ./scripts/deploy-remote-llm.sh
    ```
 
-2. **Start the services**:
+2. **Check status**:
    ```bash
-   docker-compose up -d
+   ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml ps'
    ```
 
-3. **Check status**:
+3. **View logs**:
    ```bash
-   docker-compose ps
-   docker-compose logs -f
+   ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml logs -f'
    ```
+
+### Legacy Docker Deployment
+
+For local model deployment:
+
+```bash
+docker-compose -f docker-compose.dual-models.yml up -d
+```
 
 ## 🧪 Testing
 
@@ -379,37 +377,70 @@ pip install -r requirements.txt
 
 ### REST API Endpoints
 
-#### POST `/api/chat`
-Send a message to the agent.
+#### POST `/chat`
+Send a message to the remote LLM via the API Gateway.
 
 **Request**:
 ```json
 {
-  "message": "Check disk usage"
+  "message": "Check disk usage",
+  "model": "qwen3",
+  "stream": false
 }
 ```
 
 **Response**:
 ```json
 {
-  "response": "I'll check the disk usage for you...",
-  "status": "success"
+  "response": "I'll help you check the disk usage...",
+  "model_used": "qwen3",
+  "timestamp": "2024-01-01T12:00:00",
+  "processing_time": 2.5,
+  "tokens_used": null
 }
 ```
 
-#### GET `/api/status`
-Get agent status information.
+#### POST `/chat/{model_id}`
+Send a message to a specific model (qwen3).
+
+**Request**: Same as `/chat`
+
+#### GET `/status`
+Get gateway and model status information.
 
 **Response**:
 ```json
 {
-  "name": "SysAdminAgent",
-  "version": "1.0.0",
-  "model_loaded": true,
-  "autogen_initialized": true,
-  "conversation_length": 5,
-  "security_enabled": true,
-  "audit_logging": true
+  "status": "healthy",
+  "models": {
+    "qwen3": {
+      "name": "Qwen3-4B-Thinking",
+      "status": "healthy",
+      "url": "http://100.79.227.126:1234",
+      "model_id": "qwen/qwen3-4b-thinking-2507",
+      "last_health_check": "2024-01-01T12:00:00"
+    }
+  },
+  "uptime": 3600.5,
+  "total_requests": 42,
+  "requests_by_model": {"qwen3": 42}
+}
+```
+
+#### GET `/models`
+List available models and their capabilities.
+
+**Response**:
+```json
+{
+  "models": {
+    "qwen3": {
+      "name": "Qwen3-4B-Thinking",
+      "description": "Advanced reasoning model for complex system administration tasks",
+      "strengths": ["Advanced reasoning", "Complex problem solving", "System analysis"],
+      "status": "available"
+    }
+  }
 }
 ```
 
@@ -420,29 +451,21 @@ Health check endpoint.
 ```json
 {
   "status": "healthy",
-  "agent": { ... }
+  "timestamp": "2024-01-01T12:00:00"
 }
 ```
 
-### WebSocket API
+### Authentication
 
-Connect to `ws://your-pi-ip:8080/ws` for real-time communication.
-
-**Message Format**:
-```json
-{
-  "type": "chat",
-  "message": "Your message here"
-}
+If `API_KEY` is configured, include the header:
+```
+X-API-Key: your-api-key-here
 ```
 
-**Response Format**:
-```json
-{
-  "type": "response",
-  "message": "Agent response here"
-}
-```
+### Rate Limiting
+
+- Default: 60 requests per minute per IP
+- Configurable via `RATE_LIMIT_PER_MINUTE` environment variable
 
 ## 🤝 Contributing
 

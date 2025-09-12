@@ -1,5 +1,5 @@
 # Multi-stage build for API Gateway - Raspberry Pi 5 optimized
-# Handles dynamic routing between Gemma 2 and DeepSeek-R1 Distill models
+# Handles dynamic routing between Gemma 3 and DeepSeek-R1 models
 FROM python:3.11-slim as base
 
 # Set environment variables

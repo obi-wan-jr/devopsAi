@@ -12,9 +12,9 @@ import httpx
 import argparse
 
 class AIChatCLI:
-    def __init__(self, api_url: str = "http://localhost:9000"):
+    def __init__(self, api_url: str = "http://localhost:4000"):
         self.api_url = api_url
-        self.session = httpx.AsyncClient(timeout=30.0)
+        self.session = httpx.AsyncClient(timeout=120.0)
         
     async def chat(self, message: str, model: Optional[str] = None) -> str:
         """Send a chat message to the API Gateway"""
@@ -82,7 +82,7 @@ class AIChatCLI:
         print("\nCommands:")
         print("  /help     - Show this help")
         print("  /models   - List available models")
-        print("  /model <name> - Switch to specific model (gemma3, deepseek)")
+        print("  /model <name> - Switch to specific model (qwen3)")
         print("  /auto     - Use automatic model selection")
         print("  /quit     - Exit the chat")
         print("\nStart chatting! (Type your message and press Enter)")
@@ -107,7 +107,7 @@ class AIChatCLI:
                         print("\nCommands:")
                         print("  /help     - Show this help")
                         print("  /models   - List available models")
-                        print("  /model <name> - Switch to specific model (gemma3, deepseek)")
+                        print("  /model <name> - Switch to specific model (qwen3)")
                         print("  /auto     - Use automatic model selection")
                         print("  /quit     - Exit the chat")
                         continue
@@ -120,11 +120,11 @@ class AIChatCLI:
                         continue
                     elif user_input.startswith('/model '):
                         model_name = user_input[7:].strip()
-                        if model_name in ['tinyllama', 'qwen']:
+                        if model_name in ['qwen3']:
                             current_model = model_name
                             print(f"✅ Switched to {model_name}")
                         else:
-                            print("❌ Invalid model. Use 'tinyllama' or 'qwen'")
+                            print("❌ Invalid model. Use 'qwen3'")
                         continue
                     elif user_input == '/auto':
                         current_model = None
@@ -169,8 +169,8 @@ class AIChatCLI:
 
 async def main():
     parser = argparse.ArgumentParser(description="AI System Administrator Agent CLI")
-    parser.add_argument("--url", default="http://localhost:9000", help="API Gateway URL")
-    parser.add_argument("--model", choices=["tinyllama", "qwen"], help="Specific model to use")
+    parser.add_argument("--url", default="http://localhost:4000", help="API Gateway URL")
+    parser.add_argument("--model", choices=["qwen3"], help="Specific model to use")
     parser.add_argument("message", nargs="*", help="Message to send (if not provided, starts interactive mode)")
     
     args = parser.parse_args()

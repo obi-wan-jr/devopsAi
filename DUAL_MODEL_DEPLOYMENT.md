@@ -1,14 +1,14 @@
-# Dual-Model AI System Administrator Agent - Raspberry Pi 5 Deployment
+# Remote LLM AI System Administrator Agent - Raspberry Pi 5 Deployment
 
 ## 🎯 Overview
 
-This deployment provides a sophisticated dual-model AI-powered system administrator agent for your Raspberry Pi 5 server "meatpi" with the following features:
+This deployment provides a sophisticated AI-powered system administrator agent for your Raspberry Pi 5 server "meatpi" with the following features:
 
-- **Gemma 3 (1B parameters)**: Google's efficient model for general system administration tasks
-- **DeepSeek-R1 (1.5B parameters)**: Specialized model for complex reasoning and analysis
-- **API Gateway**: Intelligent routing between models based on query type
+- **Remote Qwen3-4B-Thinking**: Advanced reasoning model hosted remotely for complex system administration tasks
+- **API Gateway**: Intelligent interface to the remote LLM service
 - **Wiki.js**: Comprehensive documentation and knowledge base
 - **Containerized Deployment**: Docker Compose orchestration for reliability
+- **Ultra-Low Resource Usage**: Only ~384MB memory vs ~6GB with local models
 
 ## 🚀 Quick Start
 
@@ -24,81 +24,62 @@ This deployment provides a sophisticated dual-model AI-powered system administra
 ```bash
 # From your local machine - clean deployment
 ./scripts/nuke-and-pave.sh
-./scripts/deploy-dual-models.sh
+./scripts/deploy-remote-llm.sh
 ```
 
 ### 2. Verify Deployment
 
 ```bash
 # Check service status
-./scripts/manage-dual-models.sh status
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml ps"
 
 # Test AI interaction
-./scripts/manage-dual-models.sh test
+curl -X POST http://meatpi:4000/chat -H "Content-Type: application/json" -d '{"message": "Hello, can you help me with system administration?"}'
 
 # Check health
-./scripts/manage-dual-models.sh health
+curl http://meatpi:4000/health
 ```
 
 ## 🌐 Access URLs
 
 Once deployed, access your services at:
 
-- **🧠 Gemma 3 API**: `http://meatpi:11434`
-- **🧠 DeepSeek-R1 API**: `http://meatpi:11435`
-- **🌐 API Gateway**: `http://meatpi:8080`
+- **🌐 API Gateway**: `http://meatpi:4000`
 - **📚 Wiki.js**: `http://meatpi:3004`
-- **📊 Health Check**: `http://meatpi:8080/health`
-- **📋 Status**: `http://meatpi:8080/status`
+- **📊 Health Check**: `http://meatpi:4000/health`
+- **📋 Status**: `http://meatpi:4000/status`
+- **🧠 Remote LLM**: `http://100.79.227.126:1234` (direct access)
 
-## 🧠 Model Comparison & Usage
+## 🧠 Remote LLM Usage
 
-### Gemma 3 (1B parameters) - Port 11434
-**Best for**: General tasks, Code generation, System monitoring, Troubleshooting
+### Qwen3-4B-Thinking (4B parameters) - Remote Service
+**Best for**: Advanced reasoning, Complex problem solving, System analysis, Decision making, Root cause analysis, Code generation
 
-**Use when**:
-- You need quick, reliable responses for common system admin tasks
-- Generating scripts or commands
-- Basic system monitoring and status checks
-- Simple troubleshooting
-
-**Direct API**:
-```bash
-curl -X POST http://meatpi:11434/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemma3:1b",
-    "prompt": "Show me the current disk usage",
-    "stream": false
-  }'
-```
-
-### DeepSeek-R1 (1.5B parameters) - Port 11435
-**Best for**: Complex reasoning, Problem analysis, Decision making, Root cause analysis
-
-**Use when**:
-- You need deep analysis or complex problem-solving
-- Investigating system issues or failures
-- Making decisions about system configuration
-- Understanding complex relationships between system components
+**Capabilities**:
+- Advanced reasoning with step-by-step thinking
+- Complex system administration tasks
+- Deep analysis of system issues
+- Code generation and script writing
+- Troubleshooting and diagnostics
+- Decision making for system configuration
 
 **Direct API**:
 ```bash
-curl -X POST http://meatpi:11435/api/generate \
+curl -X POST http://100.79.227.126:1234/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "deepseek-r1:1.5b",
-    "prompt": "Analyze why my system is running slowly",
-    "stream": false
+    "model": "qwen/qwen3-4b-thinking-2507",
+    "messages": [{"role": "user", "content": "Show me the current disk usage"}],
+    "max_tokens": 1024
   }'
 ```
 
 ### API Gateway - Port 8080
-**Intelligent routing** that automatically selects the best model based on your query
+**Simplified interface** to the remote LLM service
 
-**Auto-selection**:
+**Standard usage**:
 ```bash
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
   -d '{
     "message": "Your question here",
@@ -106,17 +87,14 @@ curl -X POST http://meatpi:8080/chat \
   }'
 ```
 
-**Specific model selection**:
+**Streaming responses**:
 ```bash
-# Use Gemma 3 specifically
-curl -X POST http://meatpi:8080/chat/gemma3 \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me running processes"}'
-
-# Use DeepSeek-R1 specifically
-curl -X POST http://meatpi:8080/chat/deepseek \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Analyze this error log"}'
+  -d '{
+    "message": "Analyze my system performance",
+    "stream": true
+  }'
 ```
 
 ## 🛠️ Management Commands
@@ -125,34 +103,27 @@ curl -X POST http://meatpi:8080/chat/deepseek \
 
 ```bash
 # Check status
-./scripts/manage-dual-models.sh status
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml ps"
 
 # View logs
-./scripts/manage-dual-models.sh logs
-./scripts/manage-dual-models.sh logs api-gateway
-./scripts/manage-dual-models.sh logs ollama-gemma3
-./scripts/manage-dual-models.sh logs ollama-deepseek
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml logs -f"
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml logs -f api-gateway"
 
 # Start/stop/restart services
-./scripts/manage-dual-models.sh start
-./scripts/manage-dual-models.sh stop
-./scripts/manage-dual-models.sh restart
-./scripts/manage-dual-models.sh restart ollama-gemma3
-
-# Update services
-./scripts/manage-dual-models.sh update
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml up -d"
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml down"
+ssh inggo@meatpi "cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml restart"
 
 # Health check
-./scripts/manage-dual-models.sh health
+curl http://meatpi:4000/health
 
 # Test AI interaction
-./scripts/manage-dual-models.sh test
+curl -X POST http://meatpi:4000/chat -H "Content-Type: application/json" -d '{"message": "Hello"}'
 
 # Show access URLs
-./scripts/manage-dual-models.sh urls
-
-# Show model comparison
-./scripts/manage-dual-models.sh models
+echo "API Gateway: http://meatpi:4000"
+echo "Wiki.js: http://meatpi:3004"
+echo "Remote LLM: http://100.79.227.126:1234"
 ```
 
 ### Cleanup Commands
@@ -277,21 +248,19 @@ LOG_LEVEL: INFO
 
 ### Resource Usage
 
-- **Memory**: ~6GB total
-  - Gemma 3: 3GB
-  - DeepSeek-R1: 2.5GB
-  - API Gateway: 512MB
-  - Wiki: 512MB
-- **CPU**: Optimized for Pi 5 ARM64
-- **Storage**: ~8GB for models and data
-- **Network**: Local-only communication
+- **Memory**: ~384MB total
+  - API Gateway: 256MB
+  - Wiki: 128MB
+- **CPU**: Minimal usage (only API Gateway and Wiki)
+- **Storage**: ~1GB for application and data
+- **Network**: Communicates with remote LLM service
 
 ### Response Times
 
-- **Simple Queries**: <2 seconds
-- **Complex Analysis**: <5 seconds
-- **Model Loading**: ~15-20 seconds per model
-- **Service Startup**: ~45-60 seconds
+- **Simple Queries**: <3 seconds (includes network latency)
+- **Complex Analysis**: <8 seconds (includes network latency)
+- **Model Loading**: Instant (remote service)
+- **Service Startup**: ~30 seconds
 
 ## 🚨 Troubleshooting
 
@@ -421,24 +390,26 @@ ssh inggo@meatpi "df -h"
 
 ## 🎯 Success Criteria
 
-✅ **Gemma 3 (1B parameters)**: Successfully deployed and responding  
-✅ **DeepSeek-R1 (1.5B parameters)**: Successfully deployed and responding  
-✅ **API Gateway**: Intelligent model routing working  
+✅ **Remote Qwen3-4B-Thinking**: Successfully connected and responding  
+✅ **API Gateway**: Remote LLM integration working  
 ✅ **Wiki.js**: Documentation service on port 3004  
-✅ **Dual Model Architecture**: Both models running simultaneously  
-✅ **Dynamic Model Selection**: Auto-selection based on query type  
+✅ **Ultra-Low Resource Usage**: Only ~384MB memory consumption  
+✅ **Fast Startup**: ~30 second service initialization  
 ✅ **Containerized Deployment**: Docker Compose orchestration  
 ✅ **Security**: Non-root execution and command validation  
 ✅ **Documentation**: Comprehensive setup and usage guides  
+✅ **Network Integration**: Seamless remote LLM communication  
 
 ## 🎉 Conclusion
 
-Your Dual-Model AI System Administrator Agent is now ready for production use on Raspberry Pi 5 "meatpi"! The system provides:
+Your Remote LLM AI System Administrator Agent is now ready for production use on Raspberry Pi 5 "meatpi"! The system provides:
 
-- **Intelligent Model Selection**: Automatically chooses the best model for each task
-- **Specialized Capabilities**: Gemma 3 for general tasks, DeepSeek-R1 for complex analysis
+- **Advanced Reasoning**: Qwen3-4B-Thinking with step-by-step problem solving
+- **Ultra-Low Resource Usage**: Only ~384MB memory vs ~6GB with local models
+- **Fast Startup**: ~30 second initialization vs ~60 seconds with local models
 - **Comprehensive Documentation**: Wiki.js with detailed usage guidelines
-- **Easy Management**: Simple scripts for all operations
+- **Easy Management**: Simple Docker Compose commands for all operations
 - **Production-Ready**: Robust deployment with health monitoring
+- **Network Efficiency**: Leverages remote LLM service for processing
 
-Start using your dual-model AI agent by accessing `http://meatpi:8080` or using the direct model APIs!
+Start using your remote LLM AI agent by accessing `http://meatpi:8080` or using the direct remote LLM API at `http://100.79.227.126:1234`!

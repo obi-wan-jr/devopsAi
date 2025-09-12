@@ -2,10 +2,12 @@
 
 ## 🎯 Overview
 
-Your Raspberry Pi 5 "meatpi" is now running a sophisticated dual-model AI system administrator agent with intelligent routing between two specialized models:
+Your Raspberry Pi 5 "meatpi" is now running an ultra-efficient AI system administrator agent with remote Qwen3-4B-Thinking model for advanced reasoning capabilities:
 
-- **Gemma 3 (1B parameters)**: Fast, efficient model for general system administration tasks
-- **DeepSeek-R1 (1.5B parameters)**: Advanced reasoning model for complex analysis and problem-solving
+- **Qwen3-4B-Thinking (4B parameters)**: Advanced reasoning model for complex system administration, analysis, and problem-solving
+- **Ultra-Low Resource Usage**: Only ~384MB memory vs ~6GB with local models
+- **API Gateway**: Intelligent interface with security and rate limiting
+- **Documentation Site**: Wiki.js documentation on port 3004
 
 ## 🌐 Access Points
 
@@ -15,135 +17,106 @@ Your Raspberry Pi 5 "meatpi" is now running a sophisticated dual-model AI system
 - **Features**: Search, copy-paste commands, health checks, responsive design
 
 ### API Gateway (Recommended)
-- **URL**: `http://meatpi:8080`
-- **Purpose**: Intelligent routing that automatically selects the best model for your query
-- **Health Check**: `http://meatpi:8080/health`
+- **URL**: `http://meatpi:4000`
+- **Purpose**: Secure gateway to remote Qwen3-4B-Thinking model
+- **Health Check**: `http://meatpi:4000/health`
 
-### Direct Model Access
-- **Gemma 3**: `http://meatpi:11434`
-- **DeepSeek-R1**: `http://meatpi:11435`
+### Direct Remote LLM Access
+- **Qwen3-4B-Thinking**: `http://100.79.227.126:1234`
 
 ## 🚀 Quick Start
 
 ### Test Your Setup
 ```bash
 # Check if everything is running
-curl http://meatpi:8080/health
+curl http://meatpi:4000/health
 
 # Test AI interaction
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello, who are you?"}'
 ```
 
-## 🤖 Model Selection Guide
+## 🤖 Remote LLM Capabilities
 
-### When to Use Gemma 3 (1B)
-**Best for**: Quick responses, general tasks, code generation, system monitoring
+### Qwen3-4B-Thinking (4B parameters)
+**Best for**: Advanced reasoning, complex system administration, analysis, and problem-solving
 
-**Use Gemma 3 when you need**:
-- ✅ Quick system status checks
-- ✅ Command generation and scripts
-- ✅ Simple troubleshooting
-- ✅ File operations and directory listings
-- ✅ Service management (start/stop/restart)
-- ✅ Basic system monitoring
-
-**Examples**:
-```bash
-# System status
-curl -X POST http://meatpi:8080/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Show me the current system status and uptime"}'
-
-# Generate a script
-curl -X POST http://meatpi:8080/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Create a bash script to backup my home directory"}'
-
-# Service management
-curl -X POST http://meatpi:8080/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "How do I restart the nginx service?"}'
-```
-
-### When to Use DeepSeek-R1 (1.5B)
-**Best for**: Complex reasoning, problem analysis, decision making, root cause analysis
-
-**Use DeepSeek-R1 when you need**:
-- ✅ Deep system analysis
-- ✅ Complex problem troubleshooting
-- ✅ Performance optimization decisions
-- ✅ Security vulnerability analysis
-- ✅ Root cause investigation
-- ✅ Strategic system planning
+**Capabilities**:
+- ✅ **Advanced Reasoning**: Step-by-step problem solving with detailed explanations
+- ✅ **Complex System Analysis**: Deep analysis of system issues and performance
+- ✅ **Decision Making**: Strategic recommendations for system configuration
+- ✅ **Root Cause Analysis**: Thorough investigation of system problems
+- ✅ **Code Generation**: Writing scripts and automation solutions
+- ✅ **Security Analysis**: Vulnerability assessment and security recommendations
+- ✅ **Performance Optimization**: System tuning and optimization advice
+- ✅ **Troubleshooting**: Complex problem diagnosis and resolution
 
 **Examples**:
 ```bash
-# Complex analysis
-curl -X POST http://meatpi:8080/chat \
+# System analysis
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Analyze why my system is running slowly and suggest optimizations"}'
 
 # Troubleshooting
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "I have high CPU usage, help me identify the root cause"}'
+  -d '{"message": "I have high CPU usage, help me identify the root cause with detailed analysis"}'
 
 # Decision making
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Should I upgrade my system or optimize current configuration?"}'
+  -d '{"message": "Should I upgrade my system or optimize current configuration? Provide detailed pros/cons"}'
+
+# Security analysis
+curl -X POST http://meatpi:4000/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Perform a security assessment of my system and recommend improvements"}'
 ```
 
 ## 🔧 API Usage Examples
 
-### 1. Auto-Selection (Recommended)
-The API Gateway automatically chooses the best model:
+### 1. Standard Usage (Recommended)
+The API Gateway provides access to the remote Qwen3-4B-Thinking model:
 
 ```bash
-# Simple query (will use Gemma 3)
-curl -X POST http://meatpi:8080/chat \
+# Standard query
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Show me running processes"}'
 
-# Complex query (will use DeepSeek-R1)
-curl -X POST http://meatpi:8080/chat \
+# Complex analysis query
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Why is my system experiencing intermittent failures?"}'
+  -d '{"message": "Why is my system experiencing intermittent failures? Provide detailed analysis"}'
 ```
 
-### 2. Force Specific Model
+### 2. Force Model (Qwen3)
 ```bash
-# Force Gemma 3
-curl -X POST http://meatpi:8080/chat/gemma3 \
-  -H "Content-Type: application/json" \
-  -d '{"message": "List all Docker containers"}'
-
-# Force DeepSeek-R1
-curl -X POST http://meatpi:8080/chat/deepseek \
+# Explicit Qwen3 model usage
+curl -X POST http://meatpi:4000/chat/qwen3 \
   -H "Content-Type: application/json" \
   -d '{"message": "Analyze this error log and suggest fixes"}'
 ```
 
-### 3. Direct Model Access
+### 3. Streaming Responses
 ```bash
-# Direct Gemma 3 access
-curl -X POST http://meatpi:11434/api/generate \
+# Enable streaming for long responses
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemma3:1b",
-    "prompt": "Show me disk usage",
-    "stream": false
-  }'
+  -d '{"message": "Perform a comprehensive security audit of my system", "stream": true}'
+```
 
-# Direct DeepSeek-R1 access
-curl -X POST http://meatpi:11435/api/generate \
+### 4. Direct Remote LLM Access
+```bash
+# Direct access to remote Qwen3 model
+curl -X POST http://100.79.227.126:1234/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "deepseek-r1:1.5b",
-    "prompt": "Analyze system performance",
-    "stream": false
+    "model": "qwen/qwen3-4b-thinking-2507",
+    "messages": [{"role": "user", "content": "Show me disk usage"}],
+    "max_tokens": 1024
   }'
 ```
 
@@ -152,58 +125,58 @@ curl -X POST http://meatpi:11435/api/generate \
 ### System Monitoring
 ```bash
 # Check system status
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me current system status, CPU, memory, and disk usage"}'
+  -d '{"message": "Show me current system status, CPU, memory, and disk usage with detailed analysis"}'
 
 # Monitor processes
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me the top 10 processes by CPU usage"}'
+  -d '{"message": "Analyze the top 10 processes by CPU usage and identify potential issues"}'
 
 # Check services
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "List all running services and their status"}'
+  -d '{"message": "List all running services and analyze their health and performance"}'
 ```
 
 ### Docker Management
 ```bash
-# Docker status
-curl -X POST http://meatpi:8080/chat \
+# Docker status analysis
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me all Docker containers and their status"}'
+  -d '{"message": "Analyze all Docker containers status and provide optimization recommendations"}'
 
-# Docker cleanup
-curl -X POST http://meatpi:8080/chat \
+# Docker cleanup with reasoning
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Help me clean up unused Docker images and containers"}'
+  -d '{"message": "Perform intelligent cleanup of unused Docker images and containers with detailed reasoning"}'
 ```
 
 ### Network Troubleshooting
 ```bash
 # Network analysis
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Check network connectivity and show open ports"}'
+  -d '{"message": "Perform comprehensive network connectivity analysis and identify security issues"}'
 
 # Port analysis
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me what services are running on ports 3000-9000"}'
+  -d '{"message": "Analyze what services are running on ports 3000-9000 and assess security risks"}'
 ```
 
 ### Security Analysis
 ```bash
-# Security check
-curl -X POST http://meatpi:8080/chat \
+# Comprehensive security audit
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Perform a basic security check of my system"}'
+  -d '{"message": "Perform a comprehensive security assessment of my system with prioritized recommendations"}'
 
 # User analysis
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Show me all users and their permissions"}'
+  -d '{"message": "Analyze all users and their permissions, identify security risks and suggest improvements"}'
 ```
 
 ## 🛠️ Advanced Usage
@@ -211,25 +184,25 @@ curl -X POST http://meatpi:8080/chat \
 ### Streaming Responses
 ```bash
 # Stream response for long operations
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Analyze my system performance", "stream": true}'
+  -d '{"message": "Analyze my system performance with detailed recommendations", "stream": true}'
 ```
 
 ### Custom Prompts
 ```bash
 # System-specific prompts
-curl -X POST http://meatpi:8080/chat \
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "As a DevOps engineer, help me optimize my Raspberry Pi 5 server for AI workloads"}'
+  -d '{"message": "As a DevOps engineer, help me optimize my Raspberry Pi 5 server for AI workloads with detailed technical analysis"}'
 ```
 
 ### Batch Operations
 ```bash
-# Multiple related queries
-curl -X POST http://meatpi:8080/chat \
+# Complex multi-step analysis
+curl -X POST http://meatpi:4000/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Help me set up monitoring for my AI services and create alerts for high resource usage"}'
+  -d '{"message": "Perform comprehensive system analysis: check security, performance, and provide optimization recommendations"}'
 ```
 
 ## 🔍 Troubleshooting
@@ -237,50 +210,49 @@ curl -X POST http://meatpi:8080/chat \
 ### Check Service Status
 ```bash
 # Check all services
-ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.dual-models.yml ps'
+ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml ps'
 
 # Check specific service logs
 ssh inggo@meatpi 'docker logs api-gateway'
-ssh inggo@meatpi 'docker logs ollama-gemma3'
-ssh inggo@meatpi 'docker logs ollama-deepseek'
+ssh inggo@meatpi 'docker logs docs'
 ```
 
 ### Restart Services
 ```bash
 # Restart all services
-ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.dual-models.yml restart'
+ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml restart'
 
 # Restart specific service
-ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.dual-models.yml restart api-gateway'
+ssh inggo@meatpi 'cd /home/inggo/ai-agent && docker-compose -f docker-compose.remote-llm.yml restart api-gateway'
 ```
 
 ### Health Checks
 ```bash
 # API Gateway health
-curl http://meatpi:8080/health
+curl http://meatpi:4000/health
 
-# Model availability
-curl http://meatpi:11434/api/tags
-curl http://meatpi:11435/api/tags
+# Remote LLM availability
+curl http://100.79.227.126:1234/v1/models
 ```
 
 ## 📊 Performance Tips
 
 ### Optimize Response Time
-- Use **Gemma 3** for simple queries (faster responses)
-- Use **DeepSeek-R1** for complex analysis (better quality)
-- Let the API Gateway auto-select for best results
+- **Single Advanced Model**: Qwen3-4B-Thinking handles all complexity levels with advanced reasoning
+- **Streaming**: Use streaming for long-form responses to see results as they arrive
+- **Be Specific**: Detailed questions yield more comprehensive analysis
 
 ### Resource Management
-- **Memory Usage**: ~5GB total (Gemma 3: 2GB, DeepSeek-R1: 2.5GB)
-- **CPU**: Optimized for Pi 5 ARM64
-- **Response Time**: <2 seconds for simple queries, <5 seconds for complex analysis
+- **Memory Usage**: ~384MB total (ultra-low resource usage)
+- **CPU**: Minimal usage with remote processing
+- **Response Time**: <3 seconds for simple queries, <8 seconds for complex analysis (includes network latency)
 
 ### Best Practices
-1. **Be Specific**: Clear, detailed questions get better answers
-2. **Use Context**: Mention your system (Raspberry Pi 5, Ubuntu, etc.)
-3. **Iterate**: Ask follow-up questions for clarification
-4. **Combine Models**: Use both models for comprehensive analysis
+1. **Be Specific**: Clear, detailed questions get comprehensive analysis with reasoning
+2. **Use Streaming**: Enable streaming for complex, long-form responses
+3. **Mention Context**: Include your system details (Raspberry Pi 5, Ubuntu, etc.)
+4. **Iterate**: Ask follow-up questions for deeper analysis
+5. **Leverage Reasoning**: Qwen3 provides step-by-step problem solving
 
 ## 🎯 Success Examples
 

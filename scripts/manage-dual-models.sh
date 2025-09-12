@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Management Script for Dual-Model AI System Administrator Agent on Raspberry Pi 5 "meatpi"
-# Manages Gemma 2 + DeepSeek-R1 Distill + API Gateway + Wiki.js services
+# Management Script for Dual-Model AI System Administrator Agent
+# DEPRECATED: This script is for legacy local model deployment.
+# Use docker-compose commands directly for remote LLM deployment. on Raspberry Pi 5 "meatpi"
+# Manages Gemma 3 + DeepSeek-R1 + API Gateway + Wiki.js services
 
 set -e
 
@@ -47,7 +49,7 @@ show_status() {
     
     echo
     log_info "Container resource usage:"
-    remote_exec "docker stats --no-stream --format 'table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}' | grep -E '(ollama-gemma2|ollama-deepseek|api-gateway|wiki-js)' || echo 'No project containers running'"
+    remote_exec "docker stats --no-stream --format 'table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}' | grep -E '(ollama-gemma3|ollama-deepseek|api-gateway|wiki-js)' || echo 'No project containers running'"
     
     echo
     log_info "Docker system info:"
